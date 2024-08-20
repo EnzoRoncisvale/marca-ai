@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARCA AÍ!</title>
+  <link rel="stylesheet" href="esporte.css">
+  <link rel="shortcut icon" href="assets/images/T.png" />
+  <!-- Carregamento assíncrono da API do Google Maps -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClKCb3V1EvFceZILU-A8T4h9RQy0zBzYU&callback=initMap"></script>
+  <script>
+    let map;
+    let markers = []; // Array para armazenar os marcadores
+    let partidas = JSON.parse(localStorage.getItem('partidasEsporte')) || []; // Carregar partidas existentes
+
+    function initMap() {
+      // Localização inicial - Brasília
+      const localizacaoInicial = { lat: -15.7801, lng: -47.9292 };
+
+      // Criando um novo mapa
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: localizacaoInicial,
+        zoom: 14,
+        disableDefaultUI: true, // Desativa controles padrão do mapa
+      });
+
+      // Adiciona marcadores das quadras existentes
+      adicionarQuadras();
+
+      // Adiciona um marcador ao clicar no mapa
+      map.addListener('click', (e) => {
+        addMarker(e.latLng, map);
+      });
+
+      // Carregar partidas salvas (opcional)
+      carregarPartidas(map);
+    }
+
+    // Adiciona marcadores das quadras existentes
+    function adicionarQuadras() {
+      const quadras = [
+        { lat: -15.7797, lng: -47.9291 }, // Exemplo de coordenadas
+        { lat: -15.7810, lng: -47.9278 },
+        // Adicione as coordenadas das outras quadras aqui
+      ];
+
+      quadras.forEach(quadra => {
+        new google.maps.Marker({
+          position: quadra,
+          map: map,
+          title: 'Quadra de Esportes',
+          icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Personaliza o ícone
+        });
+      });
+    }
+
+    function addMarker(location, map) {
+      const marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: 'Clique para marcar uma partida',
+      });
+
+      marker.addListener('click', () => {
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div>
+              <h3>Marcar uma Partida</h3>
+              <p><strong>Localização:</strong> ${location.lat()}, ${location.lng()}</p>
+              <label for="esporte">Esporte:</label>
+              <select id="esporte">
+                <option value="Futebol">Futebol</option>
+                <option value="Basquete">Basquete</option>
+                <option value="Vôlei">Vôlei</option>
+                <option value="Tênis">Tênis</option>
+              </select>
+              <p><strong>Hora:</strong> <input type="time" id="hora-partida" /></p>
+              <button onclick="marcarPartida(${location.lat()}, ${location.lng()})">Marcar Partida</button>
+              <button onclick="verificarPartidas(${location.lat()}, ${location.lng()})">Verificar Partidas</button>
+            </div>
+          `,
+        });
+
+        infoWindow.open(map, marker);
+      });
+
+      // Adiciona marcador ao array
+      markers.push(marker);
+    }
+
+    function marcarPartida(lat, lng) {
+      const esporte = document.getElementById('esporte').value;
+      const hora = document.getElementById('hora-partida').value;
+
+      const partida = {
+        lat: lat,
+        lng: lng,
+        esporte: esporte,
+        hora: hora,
+        timestamp: Date.now(), // Adiciona um timestamp para expiração
+      };
+
+      // Adiciona a nova partida ao array de partidas
+      partidas.push(partida);
+
+      // Armazena o array de partidas no localStorage
+      localStorage.setItem('partidasEsporte', JSON.stringify(partidas));
+
+      // Atualiza o mapa com o novo marcador
+      adicionarMarcador(partida);
+
+      // Exibe uma mensagem de sucesso
+      alert('Partida marcada com sucesso!');
+    }
+
+    function adicionarMarcador(partida) {
+      const marker = new google.maps.Marker({
+        position: { lat: partida.lat, lng: partida.lng },
+        map: map,
+        title: `Partida de ${partida.esporte} às ${partida.hora}`,
+      });
+
+      // Adiciona um evento de hover no marcador
+      marker.addListener('mouseover', () => {
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div>
+              <h3>Partida de ${partida.esporte}</h3>
+              <p>Hora: ${partida.hora}</p>
+            </div>
+          `,
+        });
+
+        infoWindow.open(map, marker);
+      });
+
+      markers.push(marker);
+    }
+
+    function verificarPartidas(lat, lng) {
+      const partidasNaQuadra = partidas.filter(partida => partida.lat === lat && partida.lng === lng);
+
+      let conteudo = `<div><h3>Partidas Existentes</h3>`;
+      if (partidasNaQuadra.length > 0) {
+        conteudo += `<ul>`;
+        partidasNaQuadra.forEach(partida => {
+          conteudo += `<li>
+            Esporte: ${partida.esporte}, Hora: ${partida.hora}
+            <button onclick="seJuntarPartida(${lat}, ${lng}, '${partida.esporte}', '${partida.hora}')">Juntar-se</button>
+          </li>`;
+        });
+        conteudo += `</ul>`;
+      } else {
+        conteudo += `<p>Não há partidas marcadas nesta quadra.</p>`;
+      }
+      conteudo += `</div>`;
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: conteudo,
+      });
+
+      infoWindow.open(map);
+    }
+
+    function seJuntarPartida(lat, lng, esporte, hora) {
+      alert(`Você se juntou à partida de ${esporte} às ${hora} na localização ${lat}, ${lng}.`);
+    }
+
+    function carregarPartidas(map) {
+      partidas.forEach(partida => {
+        new google.maps.Marker({
+          position: { lat: partida.lat, lng: partida.lng },
+          map: map,
+          title: `Partida de ${partida.esporte} às ${partida.hora}`,
+        });
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="football-info">
+      <img class="logo" src="assets/img/Marca Aí! Logo.svg" alt="">
+      <div id="map" style="height: 800px; width: 100%;"></div> <!-- Div para o mapa -->
+      <a href="partidas.html" class="voltar-btn">Ver Partidas Marcadas</a>
+    </div>
+  </div>
+</body>
+</html>

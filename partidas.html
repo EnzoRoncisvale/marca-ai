@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partidas Criadas</title>
+  <link rel="stylesheet" href="partidas.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Partidas Criadas</h2>
+    <div id="partidas-list">
+      <!-- Lista de partidas será preenchida aqui pelo JavaScript -->
+    </div>
+    <a href="index.html" class="voltar-btn">Voltar ao Mapa</a>
+  </div>
+
+  <script>
+    // Função para carregar partidas
+    function carregarPartidas() {
+      const partidas = JSON.parse(localStorage.getItem('partidasEsporte')) || [];
+      const partidasList = document.getElementById('partidas-list');
+      partidasList.innerHTML = '';
+
+      if (partidas.length === 0) {
+        partidasList.innerHTML = '<p>Não há partidas criadas.</p>';
+        return;
+      }
+
+      partidas.forEach(partida => {
+        const partidaItem = document.createElement('div');
+        partidaItem.className = 'partida-item';
+        partidaItem.innerHTML = `
+          <h3>${partida.esporte}</h3>
+          <p><strong>Hora:</strong> ${partida.hora}</p>
+          <p><strong>Localização:</strong> ${partida.lat}, ${partida.lng}</p>
+          <p><strong>Participantes:</strong> 0</p> <!-- Atualize conforme necessário -->
+        `;
+        partidasList.appendChild(partidaItem);
+      });
+    }
+
+    // Carregar partidas quando a página for carregada
+    window.onload = carregarPartidas;
+  </script>
+</body>
+</html>
