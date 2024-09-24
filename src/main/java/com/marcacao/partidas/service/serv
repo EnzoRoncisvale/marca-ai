@@ -1,0 +1,23 @@
+package com.marcacao.partidas.service;
+
+import com.marcacao.partidas.domain.Partida;
+import com.marcacao.partidas.repository.PartidaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class PartidaService {
+
+    @Autowired
+    private PartidaRepository partidaRepository;
+
+    public List<Partida> listarPartidas() {
+        return partidaRepository.findAll();
+    }
+
+    public Partida criarPartida(Partida partida) {
+        return partidaRepository.save(partida);
+    }
+}
