@@ -661,6 +661,14 @@ body {
   animation: slideUp 0.25s ease-out;
 }
 
+.modal-card form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 @keyframes slideUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -672,6 +680,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .modal-title {
@@ -702,6 +711,8 @@ body {
 .modal-body {
   padding: 1.5rem;
   overflow-y: auto;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -715,6 +726,7 @@ body {
   justify-content: flex-end;
   gap: 0.75rem;
   background: var(--gray-50);
+  flex-shrink: 0;
 }
 
 /* Form Controls */

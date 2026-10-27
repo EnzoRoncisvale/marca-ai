@@ -249,11 +249,13 @@
           </p>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline" onclick="window.marcaApp.closeCreateModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">
-            <i class="fa-solid fa-check"></i>
-            <span>Publicar Jogo Aberto</span>
+        <div class="modal-footer" style="padding: 1.2rem 1.5rem; background: #f8fafc; border-top: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+          <button type="button" class="btn btn-outline" onclick="window.marcaApp.closeCreateModal()">
+            <i class="fa-solid fa-xmark"></i> Cancelar
+          </button>
+          <button type="submit" id="btn-submit-partida" class="btn btn-primary" style="background: #10b981; border: none; font-size: 1rem; font-weight: 800; padding: 0.75rem 1.5rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); cursor: pointer;">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Confirmar e Salvar Partida no SQLite</span>
           </button>
         </div>
       </form>

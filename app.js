@@ -405,8 +405,17 @@ class MarcaAiApp {
     const lngInput = document.getElementById("form-lng");
     const coordsDisplay = document.getElementById("form-coords-display");
 
-    const selectedLat = lat || (this.map ? this.map.getCenter().lat : -15.7985);
-    const selectedLng = lng || (this.map ? this.map.getCenter().lng : -47.9045);
+    let selectedLat = -15.7985;
+    let selectedLng = -47.9045;
+
+    if (lat !== null && !isNaN(lat)) {
+      selectedLat = parseFloat(lat);
+      selectedLng = parseFloat(lng);
+    } else if (this.map) {
+      const center = this.map.getCenter();
+      selectedLat = center.lat;
+      selectedLng = center.lng;
+    }
 
     if (latInput) latInput.value = selectedLat.toFixed(6);
     if (lngInput) lngInput.value = selectedLng.toFixed(6);
@@ -427,7 +436,13 @@ class MarcaAiApp {
   async handleCreateMatchSubmit(e) {
     e.preventDefault();
 
-    const title = document.getElementById("form-title").value.trim();
+    const submitBtn = document.getElementById("btn-submit-partida");
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gravando no SQLite...';
+    }
+
+    const title = document.getElementById("form-title").value.trim() || "Racha";
     const sportSelect = document.getElementById("form-sport");
     const sport = sportSelect.value;
     const category = sportSelect.options[sportSelect.selectedIndex].dataset.category || "futebol";
@@ -440,8 +455,10 @@ class MarcaAiApp {
     const maxPlayers = parseInt(document.getElementById("form-max-players").value, 10);
     const hasLighting = document.getElementById("form-lighting") ? document.getElementById("form-lighting").checked : true;
     const hasGoaliePerk = document.getElementById("form-goalie-perk")?.checked || false;
-    const lat = parseFloat(document.getElementById("form-lat").value);
-    const lng = parseFloat(document.getElementById("form-lng").value);
+    const latVal = parseFloat(document.getElementById("form-lat")?.value);
+    const lngVal = parseFloat(document.getElementById("form-lng")?.value);
+    const lat = (!isNaN(latVal) && latVal !== 0) ? latVal : (this.map ? this.map.getCenter().lat : -15.7985);
+    const lng = (!isNaN(lngVal) && lngVal !== 0) ? lngVal : (this.map ? this.map.getCenter().lng : -47.9045);
 
     const matchPayload = {
       id: "match-" + Date.now(),
@@ -480,7 +497,11 @@ class MarcaAiApp {
         this.renderMapMarkers();
         this.renderSidebarMatches();
         this.updateCounters();
-        this.showToast(`⚽ Partida "${title}" gravada no SQLite com sucesso!`);
+        this.showToast(`⚽ Partida "${title}" salva no SQLite com sucesso!`);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> <span>Confirmar e Salvar Partida no SQLite</span>';
+        }
         this.selectMatch(matchPayload.id);
         return;
       }

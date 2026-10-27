@@ -73,6 +73,16 @@ def create_partida(data):
     
     p_id = data.get("id") or f"match-{int(os.times().elapsed * 1000)}"
     
+    try:
+        lat = float(data.get("lat")) if data.get("lat") is not None and str(data.get("lat")).strip() != "" else -15.7985
+    except (ValueError, TypeError):
+        lat = -15.7985
+
+    try:
+        lng = float(data.get("lng")) if data.get("lng") is not None and str(data.get("lng")).strip() != "" else -47.9045
+    except (ValueError, TypeError):
+        lng = -47.9045
+    
     cursor.execute("""
         INSERT INTO partidas (
             id, title, sport, category, date, time, venue, address,
@@ -81,17 +91,17 @@ def create_partida(data):
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         p_id,
-        data["title"],
-        data["sport"],
+        data.get("title", "Pelada").strip() or "Partida",
+        data.get("sport", "Futebol Society"),
         data.get("category", "futebol"),
-        data["date"],
-        data["time"],
-        data["venue"],
-        data.get("address", data["venue"]),
+        data.get("date", "Hoje"),
+        data.get("time", "19:30"),
+        data.get("venue", "Quadra Pública").strip() or "Quadra Pública",
+        (data.get("address") or data.get("venue") or "Brasília - DF").strip(),
         data.get("courtType", "Quadra Pública"),
         1 if data.get("hasLighting", True) else 0,
-        float(data["lat"]),
-        float(data["lng"]),
+        lat,
+        lng,
         data.get("level", "Casual / Resenha"),
         int(data.get("maxPlayers", 14)),
         1 if data.get("hasGoaliePerk", False) else 0,
@@ -117,7 +127,6 @@ def join_partida(partida_id, user, as_waitlist=False):
     conn = get_connection()
     cursor = conn.cursor()
     
-    # Verificar se já participa
     cursor.execute("""
         SELECT id FROM participantes WHERE partida_id = ? AND user_id = ?
     """, (partida_id, user["id"]))
@@ -139,7 +148,6 @@ def leave_partida(partida_id, user_id):
     conn = get_connection()
     cursor = conn.cursor()
     
-    # Obter se o usuário que está saindo era titular
     cursor.execute("""
         SELECT is_waitlist FROM participantes WHERE partida_id = ? AND user_id = ?
     """, (partida_id, user_id))
@@ -151,12 +159,10 @@ def leave_partida(partida_id, user_id):
         
     was_waitlist = row["is_waitlist"]
     
-    # Remove participante
     cursor.execute("""
         DELETE FROM participantes WHERE partida_id = ? AND user_id = ?
     """, (partida_id, user_id))
     
-    # Se era titular, promove o primeiro da lista de espera
     promoted_user = None
     if not was_waitlist:
         cursor.execute("""
@@ -186,4 +192,4 @@ def delete_partida(partida_id):
 
 if __name__ == "__main__":
     init_db()
-    print("Banco de dados SQLite inicializado com sucesso em marca_ai.db (Sem dados de exemplo).")
+    print("Banco de dados SQLite inicializado com sucesso em marca_ai.db.")
