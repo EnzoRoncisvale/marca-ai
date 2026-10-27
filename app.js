@@ -107,16 +107,48 @@ class MarcaAiApp {
       zoomControl: false
     }).setView([initialLat, initialLng], 13);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    // 1. Camada Noturna (CartoDB Dark Matter) - Padrão Noturno
+    const noturnoLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       maxZoom: 19,
-      attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(this.map);
+      subdomains: "abcd",
+      attribution: '&copy; CARTO &copy; OpenStreetMap'
+    });
+
+    // 2. Camada Satélite Fotográfico HD (Esri World Imagery)
+    const sateliteLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 19,
+      attribution: 'Imagens Satélite HD &copy; Esri'
+    });
+
+    // 3. Camada Mapa de Ruas (OpenStreetMap)
+    const ruasLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    });
+
+    // Ativa o Modo Noturno por padrão solicitado
+    noturnoLayer.addTo(this.map);
+
+    // Seletor de Camadas no mapa
+    const baseLayers = {
+      "🌙 Modo Noturno": noturnoLayer,
+      "🛰️ Satélite HD": sateliteLayer,
+      "🗺️ Mapa de Ruas": ruasLayer
+    };
+    L.control.layers(baseLayers, null, { position: "topright" }).addTo(this.map);
 
     L.control.zoom({ position: "topright" }).addTo(this.map);
 
     this.map.on("click", (e) => {
       this.handleMapClick(e.latlng);
     });
+  }
+
+  goToRegion(lat, lng, zoom = 14) {
+    if (this.map) {
+      this.map.flyTo([lat, lng], zoom, { duration: 1.2 });
+      this.showToast("📍 Navegando no mapa de Brasília...");
+    }
   }
 
   getSportIcon(category) {

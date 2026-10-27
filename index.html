@@ -111,6 +111,18 @@
 
     <!-- Mapa Interativo (Leaflet) -->
     <section class="map-view-wrapper" id="map-view-wrapper">
+      <!-- Barra Flutuante de Atalhos de Brasília -->
+      <div class="bsb-regions-bar">
+        <span class="bsb-regions-label"><i class="fa-solid fa-location-dot"></i> Brasília:</span>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7538, -47.8839, 14)">Asa Norte</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8200, -48.0650, 14)">Taguaparque</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8360, -48.0280, 14)">Águas Claras</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8285, -47.8790, 14)">Deck Sul</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8235, -47.9805, 14)">Guará</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8190, -48.1100, 14)">Ceilândia</button>
+      </div>
+
       <div id="map"></div>
 
       <!-- Controles Flutuantes do Mapa -->
