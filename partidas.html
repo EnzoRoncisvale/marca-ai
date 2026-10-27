@@ -43,7 +43,7 @@
           Jogos e Rachões Acontecendo na Área
         </h1>
         <p style="color: var(--dark-600); font-size: 0.95rem; margin-top: 0.25rem;">
-          Partidas abertas em quadras públicas, parques e praças comunitárias.
+          Partidas abertas em quadras públicas, parques e praças comunitárias salvas no banco de dados SQLite.
         </p>
       </div>
 
@@ -61,22 +61,28 @@
     <div class="ad-banner" style="margin-bottom: 1.5rem;">
       <span class="ad-badge">Patrocínio</span>
       <div class="ad-text">
-        <strong>Torneio de Futebol Amador de Bairro:</strong> Inscrições abertas para a Copa das Praças! Saiba mais nas lojas de esportes conveniadas.
+        <strong>Torneio Comunitário das Praças:</strong> Apoie o esporte local e participe dos rachões abertos na sua cidade.
       </div>
     </div>
 
     <!-- Grade de Partidas -->
     <div class="grid-cards" id="partidas-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
-      <!-- Carregado via JavaScript -->
+      <!-- Carregado via SQLite / API -->
     </div>
   </main>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const savedMatches = localStorage.getItem("marca_ai_matches_v2") || localStorage.getItem("marca_ai_matches");
+    document.addEventListener("DOMContentLoaded", async () => {
       let matches = [];
-      if (savedMatches) {
-        try { matches = JSON.parse(savedMatches); } catch(e) {}
+
+      try {
+        const res = await fetch("/api/partidas");
+        if (res.ok) {
+          matches = await res.json();
+        }
+      } catch (e) {
+        const saved = localStorage.getItem("marca_ai_sqlite_cache");
+        matches = saved ? JSON.parse(saved) : [];
       }
 
       let activeCategory = "all";
@@ -89,7 +95,10 @@
         const filtered = matches.filter(m => {
           const matchCat = activeCategory === "all" || m.category === activeCategory || (activeCategory === "futebol" && m.category === "futsal");
           const query = searchQuery.toLowerCase();
-          const matchSearch = !query || m.title.toLowerCase().includes(query) || m.venue.toLowerCase().includes(query) || m.sport.toLowerCase().includes(query);
+          const matchSearch = !query || 
+            (m.title && m.title.toLowerCase().includes(query)) || 
+            (m.venue && m.venue.toLowerCase().includes(query)) || 
+            (m.sport && m.sport.toLowerCase().includes(query));
           return matchCat && matchSearch;
         });
 
@@ -97,8 +106,8 @@
           container.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: #64748b;">
               <i class="fa-solid fa-trophy" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
-              <h3>Nenhuma partida aberta encontrada</h3>
-              <p>Volte ao mapa para marcar um jogo na quadra do seu bairro!</p>
+              <h3 style="color: #1e293b; font-weight: 700;">Nenhuma partida agendada ainda</h3>
+              <p>O banco SQLite está limpo. Volte ao mapa para marcar o primeiro jogo na quadra do seu bairro!</p>
               <a href="index.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-flex;">Ir para o Mapa</a>
             </div>
           `;
@@ -106,7 +115,8 @@
         }
 
         container.innerHTML = filtered.map(m => {
-          const vagasRestantes = m.maxPlayers - (m.players ? m.players.length : 0);
+          const playersCount = m.players ? m.players.length : 0;
+          const vagasRestantes = m.maxPlayers - playersCount;
           const isUrgente = vagasRestantes <= 2 && vagasRestantes > 0;
           return `
             <div class="match-card" style="padding: 1.25rem; border-radius: 12px; box-shadow: var(--shadow-sm);">

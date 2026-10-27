@@ -1,11 +1,11 @@
 /**
  * MARCA AÍ! - Core Application Engine
  * Plataforma Comunitária de Marcação e Descoberta de Partidas em Quadras Públicas
- * 100% Gratuito - Focado em Jogos Acontecendo na Área, Gestão de Presença e Sorteio de Times
+ * Integração com Banco de Dados SQLite (sem exemplos falsos)
  */
 
 // =============================================================================
-// 1. Estado da Aplicação & Dados Iniciais (Partidas Comunitárias / Gratuitas)
+// 1. Estado da Aplicação & Configuração de Usuário
 // =============================================================================
 
 const DEFAULT_USER = {
@@ -14,161 +14,17 @@ const DEFAULT_USER = {
   avatar: "LS",
   position: "Meio-Campo",
   karma: "4.9 ★",
-  gamesPlayed: 24,
+  gamesPlayed: 0,
   phone: "(61) 98765-4321"
 };
 
-const INITIAL_MATCHES = [
-  {
-    id: "match-1",
-    title: "Pelada Resenha dos Amigos",
-    sport: "Futebol Society",
-    category: "futebol",
-    date: "Hoje",
-    time: "19:30",
-    venue: "Quadra Poliesportiva do Parque da Cidade",
-    address: "Estacionamento 4, Parque da Cidade, Brasília - DF",
-    courtType: "Quadra Pública",
-    hasLighting: true,
-    lat: -15.7985,
-    lng: -47.9045,
-    level: "Casual / Resenha",
-    maxPlayers: 14,
-    hasGoaliePerk: true,
-    organizerId: "usr-01",
-    players: [
-      { id: "usr-01", name: "Lucas Silva (Você)", role: "Meio-Campo", isOrganizer: true },
-      { id: "usr-02", name: "Rodrigo 'Muralha'", role: "Goleiro", isOrganizer: false },
-      { id: "usr-03", name: "Gabriel Souza", role: "Atacante", isOrganizer: false },
-      { id: "usr-04", name: "Matheus Oliveira", role: "Zagueiro", isOrganizer: false },
-      { id: "usr-05", name: "Felipe 'Canhoto'", role: "Lateral", isOrganizer: false },
-      { id: "usr-06", name: "Thiago Rocha", role: "Meio-Campo", isOrganizer: false },
-      { id: "usr-07", name: "Bruno Santos", role: "Atacante", isOrganizer: false },
-      { id: "usr-08", name: "Diego Ramos", role: "Zagueiro", isOrganizer: false },
-      { id: "usr-09", name: "Caio Mendes", role: "Lateral", isOrganizer: false },
-      { id: "usr-10", name: "Vinicius Lima", role: "Meio-Campo", isOrganizer: false },
-      { id: "usr-11", name: "Pedro Henrique", role: "Goleiro", isOrganizer: false },
-      { id: "usr-12", name: "Rafael Costa", role: "Zagueiro", isOrganizer: false }
-    ],
-    waitlist: []
-  },
-  {
-    id: "match-2",
-    title: "Futsal da Comunidade",
-    sport: "Futsal",
-    category: "futsal",
-    date: "Amanhã",
-    time: "20:00",
-    venue: "Praça Comunitária da EQN 704",
-    address: "EQN 704/705, Asa Norte, Brasília - DF",
-    courtType: "Quadra Pública",
-    hasLighting: true,
-    lat: -15.7725,
-    lng: -47.8860,
-    level: "Intermediário",
-    maxPlayers: 10,
-    hasGoaliePerk: true,
-    organizerId: "usr-20",
-    players: [
-      { id: "usr-20", name: "André Martins", role: "Fixo", isOrganizer: true },
-      { id: "usr-21", name: "Renan Silveira", role: "Goleiro", isOrganizer: false },
-      { id: "usr-22", name: "Marcos Paulo", role: "Ala", isOrganizer: false },
-      { id: "usr-23", name: "Lucas Ferreira", role: "Ala", isOrganizer: false },
-      { id: "usr-24", name: "Igor Duarte", role: "Pivô", isOrganizer: false },
-      { id: "usr-25", name: "Danilo Neves", role: "Fixo", isOrganizer: false },
-      { id: "usr-26", name: "Guilherme Vaz", role: "Ala", isOrganizer: false },
-      { id: "usr-27", name: "Leonardo Cruz", role: "Ala", isOrganizer: false },
-      { id: "usr-28", name: "Bruno Cesar", role: "Pivô", isOrganizer: false },
-      { id: "usr-29", name: "Fábio Santos", role: "Goleiro", isOrganizer: false }
-    ],
-    waitlist: [
-      { id: "usr-30", name: "Marcelo Torres", role: "Ala" }
-    ]
-  },
-  {
-    id: "match-3",
-    title: "Beach Tennis Aberto na Orla",
-    sport: "Beach Tennis",
-    category: "beach-tennis",
-    date: "Sábado",
-    time: "08:30",
-    venue: "Quadras de Areia do Deck Sul",
-    address: "Setor de Clubes Sul, Orla do Lago, Brasília - DF",
-    courtType: "Quadra Pública",
-    hasLighting: false,
-    lat: -15.8230,
-    lng: -47.8715,
-    level: "Casual / Resenha",
-    maxPlayers: 8,
-    hasGoaliePerk: false,
-    organizerId: "usr-40",
-    players: [
-      { id: "usr-40", name: "Carolina Becker", role: "Jogadora", isOrganizer: true },
-      { id: "usr-41", name: "Juliana Andrade", role: "Jogadora", isOrganizer: false },
-      { id: "usr-42", name: "Arthur Vieira", role: "Jogador", isOrganizer: false },
-      { id: "usr-43", name: "Marina Lopes", role: "Jogadora", isOrganizer: false }
-    ],
-    waitlist: []
-  },
-  {
-    id: "match-4",
-    title: "Basquete 3x3 Streetball",
-    sport: "Basquete",
-    category: "basquete",
-    date: "Domingo",
-    time: "16:00",
-    venue: "Parque Olhos D'Água - Quadra Pública",
-    address: "SQN 413/414, Asa Norte, Brasília - DF",
-    courtType: "Quadra Pública",
-    hasLighting: true,
-    lat: -15.7538,
-    lng: -47.8839,
-    level: "Competitivo",
-    maxPlayers: 6,
-    hasGoaliePerk: false,
-    organizerId: "usr-50",
-    players: [
-      { id: "usr-50", name: "Otávio 'Crossover'", role: "Armador", isOrganizer: true },
-      { id: "usr-51", name: "Hugo Valente", role: "Ala", isOrganizer: false },
-      { id: "usr-52", name: "Samuel Dias", role: "Pivô", isOrganizer: false },
-      { id: "usr-53", name: "Vitor Hugo", role: "Ala", isOrganizer: false },
-      { id: "usr-54", name: "Erick B.", role: "Armador", isOrganizer: false }
-    ],
-    waitlist: []
-  },
-  {
-    id: "match-5",
-    title: "Vôlei de Areia dos Amigos",
-    sport: "Vôlei",
-    category: "volei",
-    date: "Sexta",
-    time: "18:00",
-    venue: "Pontão do Lago Sul - Quadras Públicas",
-    address: "SHIS QL 10, Lago Sul, Brasília - DF",
-    courtType: "Quadra Pública",
-    hasLighting: true,
-    lat: -15.8285,
-    lng: -47.8790,
-    level: "Intermediário",
-    maxPlayers: 8,
-    hasGoaliePerk: false,
-    organizerId: "usr-60",
-    players: [
-      { id: "usr-60", name: "Camila Ribeiro", role: "Levantadora", isOrganizer: true },
-      { id: "usr-61", name: "Daniel Maia", role: "Ponteiro", isOrganizer: false },
-      { id: "usr-62", name: "Beatriz M.", role: "Líbero", isOrganizer: false },
-      { id: "usr-63", name: "Lucas Silva (Você)", role: "Ponteiro", isOrganizer: false },
-      { id: "usr-64", name: "Gustavo Nogueira", role: "Central", isOrganizer: false },
-      { id: "usr-65", name: "Mariana S.", role: "Ponteira", isOrganizer: false }
-    ],
-    waitlist: []
-  }
-];
+// Sem dados de exemplo iniciais - Banco começa limpo para uso real
+const INITIAL_MATCHES = [];
 
 class MarcaAiApp {
   constructor() {
     this.currentUser = this.loadUser();
-    this.matches = this.loadMatches();
+    this.matches = [];
     this.activeFilter = "todos";
     this.searchQuery = "";
     this.activeView = "map"; // 'map' | 'list' | 'my-matches'
@@ -181,7 +37,7 @@ class MarcaAiApp {
   }
 
   // ===========================================================================
-  // 2. Persistência
+  // 2. Persistência & Integração com SQLite / API REST
   // ===========================================================================
   loadUser() {
     const saved = localStorage.getItem("marca_ai_user");
@@ -192,31 +48,37 @@ class MarcaAiApp {
     localStorage.setItem("marca_ai_user", JSON.stringify(this.currentUser));
   }
 
-  loadMatches() {
-    // Carrega do localStorage ou inicializa os dados sem pagamentos
-    const saved = localStorage.getItem("marca_ai_matches_v2");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Erro ao carregar partidas", e);
+  async loadMatches() {
+    // Tenta carregar do backend SQLite
+    try {
+      const response = await fetch("/api/partidas");
+      if (response.ok) {
+        this.matches = await response.json();
+        this.saveLocalCache();
+        return;
       }
+    } catch (e) {
+      // Caso esteja rodando sem servidor (file:///), usa cache local limpo
+      console.log("Servidor SQLite não detectado ou modo offline. Usando persistência local.");
     }
-    localStorage.setItem("marca_ai_matches_v2", JSON.stringify(INITIAL_MATCHES));
-    return INITIAL_MATCHES;
+
+    const saved = localStorage.getItem("marca_ai_sqlite_cache");
+    this.matches = saved ? JSON.parse(saved) : [];
   }
 
-  saveMatches() {
-    localStorage.setItem("marca_ai_matches_v2", JSON.stringify(this.matches));
+  saveLocalCache() {
+    localStorage.setItem("marca_ai_sqlite_cache", JSON.stringify(this.matches));
   }
 
   // ===========================================================================
   // 3. Inicialização Geral
   // ===========================================================================
-  init() {
+  async init() {
     this.updateUserUI();
     this.initMap();
+    await this.loadMatches();
     this.renderSidebarMatches();
+    this.renderMapMarkers();
     this.bindEvents();
     this.updateCounters();
   }
@@ -237,6 +99,7 @@ class MarcaAiApp {
     const mapElement = document.getElementById("map");
     if (!mapElement) return;
 
+    // Coordenadas iniciais padrão (Brasília)
     const initialLat = -15.7942;
     const initialLng = -47.8822;
 
@@ -254,8 +117,6 @@ class MarcaAiApp {
     this.map.on("click", (e) => {
       this.handleMapClick(e.latlng);
     });
-
-    this.renderMapMarkers();
   }
 
   getSportIcon(category) {
@@ -271,13 +132,15 @@ class MarcaAiApp {
   }
 
   renderMapMarkers() {
+    if (!this.map) return;
     Object.values(this.markers).forEach(m => this.map.removeLayer(m));
     this.markers = {};
 
     const filtered = this.getFilteredMatches();
 
     filtered.forEach(match => {
-      const vagasRestantes = match.maxPlayers - match.players.length;
+      const playersCount = match.players ? match.players.length : 0;
+      const vagasRestantes = match.maxPlayers - playersCount;
       const isUrgente = vagasRestantes <= 2 && vagasRestantes > 0;
       const badgeBg = isUrgente ? '#ef4444' : (vagasRestantes === 0 ? '#64748b' : '#10b981');
 
@@ -356,6 +219,12 @@ class MarcaAiApp {
 
       this.markers[match.id] = marker;
     });
+
+    // Se houver partidas cadastradas, enquadra a visão do mapa nelas
+    if (filtered.length > 0) {
+      const group = new L.featureGroup(Object.values(this.markers));
+      this.map.fitBounds(group.getBounds().pad(0.3));
+    }
   }
 
   handleMapClick(latlng) {
@@ -397,13 +266,13 @@ class MarcaAiApp {
 
       const query = this.searchQuery.toLowerCase();
       const matchesSearch = !query || 
-        match.title.toLowerCase().includes(query) ||
-        match.sport.toLowerCase().includes(query) ||
-        match.venue.toLowerCase().includes(query) ||
-        match.address.toLowerCase().includes(query);
+        (match.title && match.title.toLowerCase().includes(query)) ||
+        (match.sport && match.sport.toLowerCase().includes(query)) ||
+        (match.venue && match.venue.toLowerCase().includes(query)) ||
+        (match.address && match.address.toLowerCase().includes(query));
 
       if (this.activeView === "my-matches") {
-        const isParticipant = match.players.some(p => p.id === this.currentUser.id);
+        const isParticipant = match.players && match.players.some(p => p.id === this.currentUser.id);
         const isOrganizer = match.organizerId === this.currentUser.id;
         return (isParticipant || isOrganizer) && matchesSearch;
       }
@@ -423,10 +292,10 @@ class MarcaAiApp {
       const emptyHtml = `
         <div style="text-align: center; padding: 3rem 1rem; color: #64748b;">
           <i class="fa-regular fa-futbol" style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.4;"></i>
-          <h4 style="font-weight: 700; margin-bottom: 0.25rem;">Nenhuma partida encontrada nesta área</h4>
-          <p style="font-size: 0.85rem;">Seja você o primeiro a marcar um jogo nessa quadra pública!</p>
-          <button class="btn btn-primary" onclick="window.marcaApp.openCreateModal()" style="margin-top: 1rem;">
-            + Marcar Jogo Agora
+          <h4 style="font-weight: 700; margin-bottom: 0.25rem; color: #1e293b;">Nenhuma partida agendada ainda</h4>
+          <p style="font-size: 0.85rem; margin-bottom: 1rem;">O banco de dados SQLite está limpo e pronto! Clique no botão abaixo ou no mapa para marcar a primeira pelada.</p>
+          <button class="btn btn-primary" onclick="window.marcaApp.openCreateModal()">
+            <i class="fa-solid fa-plus"></i> Marcar Primeiro Jogo
           </button>
         </div>
       `;
@@ -441,7 +310,8 @@ class MarcaAiApp {
   }
 
   generateMatchCardHtml(match) {
-    const vagasRestantes = match.maxPlayers - match.players.length;
+    const playersCount = match.players ? match.players.length : 0;
+    const vagasRestantes = match.maxPlayers - playersCount;
     let vagaClass = "abertas";
     let vagaTexto = `${vagasRestantes} vagas abertas`;
 
@@ -453,7 +323,7 @@ class MarcaAiApp {
       vagaTexto = `🔥 Falta ${vagasRestantes} pra fechar!`;
     }
 
-    const isUserIn = match.players.some(p => p.id === this.currentUser.id);
+    const isUserIn = match.players && match.players.some(p => p.id === this.currentUser.id);
 
     return `
       <div class="match-card ${this.selectedMatchId === match.id ? 'active' : ''}" id="card-${match.id}" onclick="window.marcaApp.selectMatch('${match.id}')">
@@ -525,7 +395,7 @@ class MarcaAiApp {
   }
 
   // ===========================================================================
-  // 6. Modal de Criação de Partida Comunitária
+  // 6. Criação de Partida no SQLite
   // ===========================================================================
   openCreateModal(lat = null, lng = null) {
     const modal = document.getElementById("create-match-modal");
@@ -548,13 +418,13 @@ class MarcaAiApp {
   closeCreateModal() {
     const modal = document.getElementById("create-match-modal");
     if (modal) modal.classList.remove("active");
-    if (this.tempPin) {
+    if (this.tempPin && this.map) {
       this.map.removeLayer(this.tempPin);
       this.tempPin = null;
     }
   }
 
-  handleCreateMatchSubmit(e) {
+  async handleCreateMatchSubmit(e) {
     e.preventDefault();
 
     const title = document.getElementById("form-title").value.trim();
@@ -573,7 +443,7 @@ class MarcaAiApp {
     const lat = parseFloat(document.getElementById("form-lat").value);
     const lng = parseFloat(document.getElementById("form-lng").value);
 
-    const newMatch = {
+    const matchPayload = {
       id: "match-" + Date.now(),
       title,
       sport,
@@ -590,29 +460,57 @@ class MarcaAiApp {
       maxPlayers,
       hasGoaliePerk,
       organizerId: this.currentUser.id,
-      players: [
-        {
-          id: this.currentUser.id,
-          name: this.currentUser.name,
-          role: this.currentUser.position,
-          isOrganizer: true
-        }
-      ],
-      waitlist: []
+      creator: {
+        id: this.currentUser.id,
+        name: this.currentUser.name,
+        role: this.currentUser.position
+      }
     };
 
-    this.matches.unshift(newMatch);
-    this.saveMatches();
+    // Tenta persistir na API SQLite
+    try {
+      const response = await fetch("/api/partidas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonPayload(matchPayload)
+      });
+      if (response.ok) {
+        await this.loadMatches();
+        this.closeCreateModal();
+        this.renderMapMarkers();
+        this.renderSidebarMatches();
+        this.updateCounters();
+        this.showToast(`⚽ Partida "${title}" gravada no SQLite com sucesso!`);
+        this.selectMatch(matchPayload.id);
+        return;
+      }
+    } catch (err) {
+      console.log("Fallback para persistência local:", err);
+    }
+
+    // Fallback local se o servidor não estiver respondendo
+    const localMatch = {
+      ...matchPayload,
+      players: [{
+        id: this.currentUser.id,
+        name: this.currentUser.name,
+        role: this.currentUser.position,
+        isOrganizer: true
+      }],
+      waitlist: []
+    };
+    this.matches.unshift(localMatch);
+    this.saveLocalCache();
     this.closeCreateModal();
     this.renderMapMarkers();
     this.renderSidebarMatches();
     this.updateCounters();
-    this.showToast(`⚽ Partida "${title}" agendada! Convoque a galera no Zap.`);
-    this.selectMatch(newMatch.id);
+    this.showToast(`⚽ Partida "${title}" criada com sucesso!`);
+    this.selectMatch(localMatch.id);
   }
 
   // ===========================================================================
-  // 7. Modal de Detalhes da Partida & Gestão de Presença Direta
+  // 7. Detalhes e Gestão de Presença no SQLite
   // ===========================================================================
   openMatchDetails(matchId) {
     const match = this.matches.find(m => m.id === matchId);
@@ -645,12 +543,15 @@ class MarcaAiApp {
     const waitlistEl = document.getElementById("modal-waitlist");
     const countEl = document.getElementById("modal-player-count");
 
+    const players = match.players || [];
+    const waitlist = match.waitlist || [];
+
     if (countEl) {
-      countEl.textContent = `${match.players.length} / ${match.maxPlayers} confirmados`;
+      countEl.textContent = `${players.length} / ${match.maxPlayers} confirmados`;
     }
 
     if (listEl) {
-      listEl.innerHTML = match.players.map((p, index) => `
+      listEl.innerHTML = players.map((p, index) => `
         <div class="player-item">
           <div class="player-info">
             <div class="player-avatar">${p.name.substring(0, 2).toUpperCase()}</div>
@@ -669,10 +570,10 @@ class MarcaAiApp {
     }
 
     if (waitlistEl) {
-      if (match.waitlist && match.waitlist.length > 0) {
+      if (waitlist.length > 0) {
         waitlistEl.innerHTML = `
           <h5 style="margin: 1rem 0 0.5rem; font-weight: 700; color: #475569;">Lista de Espera (Prioridade por ordem de chegada):</h5>
-          ${match.waitlist.map((w, i) => `
+          ${waitlist.map((w, i) => `
             <div class="player-item" style="opacity: 0.85;">
               <div class="player-info">
                 <div class="player-avatar" style="background: #94a3b8;">${w.name.substring(0, 2).toUpperCase()}</div>
@@ -692,9 +593,12 @@ class MarcaAiApp {
   }
 
   updateModalActions(match) {
-    const isUserInMatch = match.players.some(p => p.id === this.currentUser.id);
-    const isUserInWaitlist = match.waitlist && match.waitlist.some(p => p.id === this.currentUser.id);
-    const isFull = match.players.length >= match.maxPlayers;
+    const players = match.players || [];
+    const waitlist = match.waitlist || [];
+
+    const isUserInMatch = players.some(p => p.id === this.currentUser.id);
+    const isUserInWaitlist = waitlist.some(p => p.id === this.currentUser.id);
+    const isFull = players.length >= match.maxPlayers;
 
     const actionContainer = document.getElementById("modal-action-buttons");
     if (!actionContainer) return;
@@ -732,18 +636,48 @@ class MarcaAiApp {
     }
   }
 
-  joinMatch(matchId, asWaitlist = false) {
+  async joinMatch(matchId, asWaitlist = false) {
     const match = this.matches.find(m => m.id === matchId);
     if (!match) return;
 
+    try {
+      const response = await fetch(`/api/partidas/${matchId}/participar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonPayload({
+          user: {
+            id: this.currentUser.id,
+            name: this.currentUser.name,
+            role: this.currentUser.position
+          },
+          asWaitlist: asWaitlist || (match.players && match.players.length >= match.maxPlayers)
+        })
+      });
+      if (response.ok) {
+        await this.loadMatches();
+        const updated = this.matches.find(m => m.id === matchId);
+        this.renderPlayerList(updated);
+        this.updateModalActions(updated);
+        this.renderMapMarkers();
+        this.renderSidebarMatches();
+        this.showToast(asWaitlist ? "⏳ Você entrou na lista de espera." : `⚽ Presença confirmada!`);
+        return;
+      }
+    } catch (e) {
+      console.log("Fallback local para joinMatch");
+    }
+
+    // Fallback local
+    match.players = match.players || [];
+    match.waitlist = match.waitlist || [];
+
     if (asWaitlist || match.players.length >= match.maxPlayers) {
-      match.waitlist = match.waitlist || [];
       match.waitlist.push({
         id: this.currentUser.id,
         name: this.currentUser.name,
         role: this.currentUser.position
       });
-      this.showToast("⏳ Você entrou na lista de espera. Te avisaremos se alguém liberar vaga!");
+      this.showToast("⏳ Você entrou na lista de espera.");
     } else {
       match.players.push({
         id: this.currentUser.id,
@@ -751,26 +685,54 @@ class MarcaAiApp {
         role: this.currentUser.position,
         isOrganizer: false
       });
-      this.showToast(`⚽ Presença confirmada no ${match.sport}! Bora pro jogo.`);
+      this.showToast(`⚽ Presença confirmada no ${match.sport}!`);
     }
 
-    this.saveMatches();
+    this.saveLocalCache();
     this.renderPlayerList(match);
     this.updateModalActions(match);
     this.renderMapMarkers();
     this.renderSidebarMatches();
   }
 
-  leaveMatch(matchId) {
+  async leaveMatch(matchId) {
     const match = this.matches.find(m => m.id === matchId);
     if (!match) return;
+
+    try {
+      const response = await fetch(`/api/partidas/${matchId}/sair`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonPayload({ userId: this.currentUser.id })
+      });
+      if (response.ok) {
+        const resData = await response.json();
+        await this.loadMatches();
+        const updated = this.matches.find(m => m.id === matchId);
+        this.renderPlayerList(updated);
+        this.updateModalActions(updated);
+        this.renderMapMarkers();
+        this.renderSidebarMatches();
+        this.showToast("Você liberou sua vaga.");
+        if (resData.promotedUser) {
+          this.showToast(`🎉 ${resData.promotedUser} assumiu a vaga titular!`);
+        }
+        return;
+      }
+    } catch (e) {
+      console.log("Fallback local para leaveMatch");
+    }
+
+    // Fallback local
+    match.players = match.players || [];
+    match.waitlist = match.waitlist || [];
 
     const playerIndex = match.players.findIndex(p => p.id === this.currentUser.id);
     if (playerIndex !== -1) {
       match.players.splice(playerIndex, 1);
       this.showToast("Você liberou sua vaga.");
 
-      if (match.waitlist && match.waitlist.length > 0) {
+      if (match.waitlist.length > 0) {
         const nextInLine = match.waitlist.shift();
         match.players.push({
           id: nextInLine.id,
@@ -780,12 +742,12 @@ class MarcaAiApp {
         });
         this.showToast(`🎉 ${nextInLine.name} assumiu a vaga titular!`);
       }
-    } else if (match.waitlist) {
+    } else {
       match.waitlist = match.waitlist.filter(p => p.id !== this.currentUser.id);
       this.showToast("Você saiu da lista de espera.");
     }
 
-    this.saveMatches();
+    this.saveLocalCache();
     this.renderPlayerList(match);
     this.updateModalActions(match);
     this.renderMapMarkers();
@@ -812,7 +774,12 @@ class MarcaAiApp {
   }
 
   sortearTimes(match) {
-    const players = [...match.players];
+    const players = [...(match.players || [])];
+
+    if (players.length < 2) {
+      this.showToast("⚠️ É necessário pelo menos 2 jogadores confirmados para sortear times!");
+      return;
+    }
 
     for (let i = players.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -888,7 +855,8 @@ class MarcaAiApp {
     const match = this.matches.find(m => m.id === this.selectedMatchId);
     if (!match) return;
 
-    const vagasRestantes = match.maxPlayers - match.players.length;
+    const playersCount = match.players ? match.players.length : 0;
+    const vagasRestantes = match.maxPlayers - playersCount;
     let urgencia = vagasRestantes <= 2 && vagasRestantes > 0 ? "🔥 *FALTA POUCO / CONVOCAÇÃO URGENTE!* 🔥\n\n" : "";
 
     let message = `${urgencia}⚽ *${match.title.toUpperCase()}* (${match.sport})\n`;
@@ -1010,6 +978,10 @@ class MarcaAiApp {
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
+}
+
+function jsonPayload(obj) {
+  return JSON.stringify(obj);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
