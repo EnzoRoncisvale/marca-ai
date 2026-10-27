@@ -13,8 +13,8 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet CSS (Local e Fallback CDN) -->
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" onerror="this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'" />
   
   <!-- Estilos Customizados -->
   <link rel="stylesheet" href="app.css">
@@ -110,7 +110,7 @@
     </aside>
 
     <!-- Mapa Interativo (Leaflet) -->
-    <section class="map-view-wrapper" id="map-view-wrapper">
+    <section class="map-view-wrapper" id="map-view-wrapper" style="flex: 1; height: 100%; min-height: 500px; position: relative; overflow: hidden;">
       <!-- Barra Flutuante de Atalhos de Brasília e Seletor de Tema -->
       <div class="bsb-regions-bar">
         <span class="bsb-regions-label"><i class="fa-solid fa-location-dot"></i> Brasília:</span>
@@ -127,7 +127,7 @@
         <button class="bsb-region-btn map-theme-btn" data-theme="ruas" onclick="window.marcaApp.setMapTheme('ruas')">🗺️ Ruas</button>
       </div>
 
-      <div id="map"></div>
+      <div id="map" class="dark-map" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; z-index: 1;"></div>
 
       <!-- Controles Flutuantes do Mapa -->
       <div class="map-overlay-controls">
@@ -392,8 +392,8 @@
     </div>
   </div>
 
-  <!-- Scripts: Leaflet e Aplicação -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Scripts: Leaflet Local e Aplicação -->
+  <script src="assets/vendor/leaflet/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -107,11 +107,10 @@ class MarcaAiApp {
       zoomControl: false
     }).setView([initialLat, initialLng], 13);
 
-    // 1. Camada Noturna (CartoDB Dark Matter sem tag {r} para evitar 404)
-    const noturnoLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", {
+    // 1. Camada Base Universal (OpenStreetMap - 100% livre e sem bloqueio de rede)
+    const ruasLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
-      subdomains: "abcd",
-      attribution: '&copy; CARTO &copy; OpenStreetMap'
+      attribution: '&copy; OpenStreetMap'
     });
 
     // 2. Camada Satélite Fotográfico HD (Esri World Imagery)
@@ -120,10 +119,11 @@ class MarcaAiApp {
       attribution: 'Imagens Satélite HD &copy; Esri'
     });
 
-    // 3. Camada Mapa de Ruas (OpenStreetMap)
-    const ruasLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    // 3. Camada Noturna CartoDB Dark Matter
+    const noturnoLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", {
       maxZoom: 19,
-      attribution: '&copy; OpenStreetMap'
+      subdomains: "abcd",
+      attribution: '&copy; CARTO &copy; OpenStreetMap'
     });
 
     this.layers = {
@@ -132,21 +132,25 @@ class MarcaAiApp {
       ruas: ruasLayer
     };
 
-    // Ativa a camada noturna por padrão
-    noturnoLayer.addTo(this.map);
+    // Adiciona OpenStreetMap como camada ativa e aplica classe de filtro escuro (.dark-map)
+    ruasLayer.addTo(this.map);
+    const mapEl = document.getElementById("map");
+    if (mapEl) mapEl.classList.add("dark-map");
 
     // Seletor de Camadas nativo do Leaflet
     const baseLayers = {
-      "🌙 Modo Noturno": noturnoLayer,
+      "🌙 Modo Noturno": ruasLayer,
       "🛰️ Satélite HD": sateliteLayer,
       "🗺️ Mapa de Ruas": ruasLayer
     };
     L.control.layers(baseLayers, null, { position: "topright" }).addTo(this.map);
     L.control.zoom({ position: "topright" }).addTo(this.map);
 
-    // Garante que o Leaflet recalcule o tamanho do mapa após o carregamento do CSS (evita tela cinza/branca)
-    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 150);
-    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 600);
+    // Força o Leaflet a recalcular o tamanho imediatamente e com delays para nunca ficar em branco
+    this.map.invalidateSize();
+    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 100);
+    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 400);
+    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 1000);
 
     window.addEventListener("resize", () => {
       if (this.map) this.map.invalidateSize();
