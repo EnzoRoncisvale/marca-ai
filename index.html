@@ -111,7 +111,7 @@
 
     <!-- Mapa Interativo (Leaflet) -->
     <section class="map-view-wrapper" id="map-view-wrapper">
-      <!-- Barra Flutuante de Atalhos de Brasília -->
+      <!-- Barra Flutuante de Atalhos de Brasília e Seletor de Tema -->
       <div class="bsb-regions-bar">
         <span class="bsb-regions-label"><i class="fa-solid fa-location-dot"></i> Brasília:</span>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
@@ -121,6 +121,10 @@
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8285, -47.8790, 14)">Deck Sul</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8235, -47.9805, 14)">Guará</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8190, -48.1100, 14)">Ceilândia</button>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.25); margin: 0 4px;"></div>
+        <button class="bsb-region-btn map-theme-btn active" data-theme="noturno" onclick="window.marcaApp.setMapTheme('noturno')">🌙 Noturno</button>
+        <button class="bsb-region-btn map-theme-btn" data-theme="satelite" onclick="window.marcaApp.setMapTheme('satelite')">🛰️ Satélite</button>
+        <button class="bsb-region-btn map-theme-btn" data-theme="ruas" onclick="window.marcaApp.setMapTheme('ruas')">🗺️ Ruas</button>
       </div>
 
       <div id="map"></div>

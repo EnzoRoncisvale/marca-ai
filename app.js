@@ -107,8 +107,8 @@ class MarcaAiApp {
       zoomControl: false
     }).setView([initialLat, initialLng], 13);
 
-    // 1. Camada Noturna (CartoDB Dark Matter) - Padrão Noturno
-    const noturnoLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    // 1. Camada Noturna (CartoDB Dark Matter sem tag {r} para evitar 404)
+    const noturnoLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", {
       maxZoom: 19,
       subdomains: "abcd",
       attribution: '&copy; CARTO &copy; OpenStreetMap'
@@ -126,22 +126,61 @@ class MarcaAiApp {
       attribution: '&copy; OpenStreetMap'
     });
 
-    // Ativa o Modo Noturno por padrão solicitado
+    this.layers = {
+      noturno: noturnoLayer,
+      satelite: sateliteLayer,
+      ruas: ruasLayer
+    };
+
+    // Ativa a camada noturna por padrão
     noturnoLayer.addTo(this.map);
 
-    // Seletor de Camadas no mapa
+    // Seletor de Camadas nativo do Leaflet
     const baseLayers = {
       "🌙 Modo Noturno": noturnoLayer,
       "🛰️ Satélite HD": sateliteLayer,
       "🗺️ Mapa de Ruas": ruasLayer
     };
     L.control.layers(baseLayers, null, { position: "topright" }).addTo(this.map);
-
     L.control.zoom({ position: "topright" }).addTo(this.map);
+
+    // Garante que o Leaflet recalcule o tamanho do mapa após o carregamento do CSS (evita tela cinza/branca)
+    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 150);
+    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 600);
+
+    window.addEventListener("resize", () => {
+      if (this.map) this.map.invalidateSize();
+    });
 
     this.map.on("click", (e) => {
       this.handleMapClick(e.latlng);
     });
+  }
+
+  setMapTheme(theme) {
+    if (!this.map || !this.layers) return;
+    Object.values(this.layers).forEach(layer => this.map.removeLayer(layer));
+
+    document.querySelectorAll(".map-theme-btn").forEach(b => b.classList.remove("active"));
+    const activeBtn = document.querySelector(`.map-theme-btn[data-theme="${theme}"]`);
+    if (activeBtn) activeBtn.classList.add("active");
+
+    const mapEl = document.getElementById("map");
+
+    if (theme === "noturno") {
+      this.layers.noturno.addTo(this.map);
+      if (mapEl) mapEl.classList.add("dark-map");
+      this.showToast("🌙 Modo Noturno ativado");
+    } else if (theme === "satelite") {
+      this.layers.satelite.addTo(this.map);
+      if (mapEl) mapEl.classList.remove("dark-map");
+      this.showToast("🛰️ Satélite HD ativado");
+    } else {
+      this.layers.ruas.addTo(this.map);
+      if (mapEl) mapEl.classList.remove("dark-map");
+      this.showToast("🗺️ Mapa de Ruas ativado");
+    }
+    this.map.invalidateSize();
   }
 
   goToRegion(lat, lng, zoom = 14) {
