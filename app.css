@@ -1,5 +1,6 @@
 /* ==========================================================================
    MARCA AÍ! - Design System & Modern Sports Styling
+   Foco em Partidas Comunitárias, Quadras Públicas e Descoberta de Jogos
    ========================================================================== */
 
 :root {
@@ -112,7 +113,7 @@ body {
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-full);
   padding: 0.4rem 1rem;
-  max-width: 320px;
+  max-width: 340px;
   width: 100%;
   margin: 0 1rem;
   transition: var(--transition);
@@ -349,7 +350,6 @@ body {
   overflow: hidden;
 }
 
-/* Sidebar with Matches */
 .sidebar {
   width: 440px;
   background: var(--white);
@@ -393,6 +393,38 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+}
+
+/* Anúncio Patrocinado (Monetização) */
+.ad-banner {
+  background: linear-gradient(135deg, #f8fafc, #edf2f7);
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.ad-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: #cbd5e1;
+  color: #334155;
+  padding: 2px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.ad-text {
+  font-size: 0.78rem;
+  color: #334155;
+  line-height: 1.25;
+}
+
+.ad-text strong {
+  color: #0f172a;
 }
 
 /* Match Card */
@@ -491,10 +523,16 @@ body {
 .vagas-badge.urgente { color: var(--danger); font-weight: 700; }
 .vagas-badge.lotado { color: var(--dark-600); }
 
-.price-badge {
+.public-court-badge {
+  font-size: 0.725rem;
   font-weight: 700;
-  color: var(--dark-900);
-  font-size: 0.875rem;
+  color: #047857;
+  background: #ecfdf5;
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 /* Map Container */
@@ -510,7 +548,6 @@ body {
   z-index: 1;
 }
 
-/* Floating Controls on Map */
 .map-overlay-controls {
   position: absolute;
   top: 1rem;
@@ -568,7 +605,6 @@ body {
   50% { opacity: 0.7; }
 }
 
-/* Full List View Mode */
 .grid-view-container {
   display: none;
   flex: 1;
@@ -717,7 +753,7 @@ body {
   gap: 1rem;
 }
 
-/* Match Details Modal Specifics */
+/* Match Details Modal */
 .match-hero-banner {
   background: linear-gradient(135deg, var(--dark-900), var(--dark-800));
   color: var(--white);
@@ -756,31 +792,6 @@ body {
   gap: 0.4rem;
 }
 
-/* Tabs inside Modal */
-.modal-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--gray-200);
-  gap: 1rem;
-}
-
-.tab-btn {
-  padding: 0.6rem 0.5rem;
-  background: transparent;
-  border: none;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--dark-600);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: var(--transition);
-}
-
-.tab-btn.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-}
-
-/* Player List */
 .player-list {
   display: flex;
   flex-direction: column;
@@ -829,7 +840,6 @@ body {
 }
 
 .status-pago { background: #dcfce7; color: #166534; }
-.status-pendente { background: #fef3c7; color: #92400e; }
 .status-espera { background: #f1f5f9; color: #475569; }
 
 /* Teams Sorteio Display */
@@ -861,29 +871,6 @@ body {
 .team-1 .team-header { border-bottom-color: var(--primary); color: var(--primary); }
 .team-2 .team-header { border-bottom-color: var(--info); color: var(--info); }
 
-/* PIX QR Modal */
-.pix-box {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-#qrcode-container {
-  padding: 12px;
-  background: var(--white);
-  border: 2px dashed var(--gray-200);
-  border-radius: var(--radius-md);
-}
-
-.pix-code-input {
-  display: flex;
-  width: 100%;
-  gap: 0.5rem;
-}
-
 /* Toast Notifications */
 .toast {
   position: fixed;
@@ -908,7 +895,6 @@ body {
   to { transform: translateX(0); }
 }
 
-/* Responsive adjustments */
 @media (max-width: 900px) {
   .app-container {
     flex-direction: column;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Marca Aí! - Agendamento e Organização de Partidas</title>
+  <title>Marca Aí! - Jogos e Quadras Públicas na sua Área</title>
   
   <!-- Fontes Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,18 +28,18 @@
   <header class="navbar">
     <a href="index.html" class="nav-brand">
       <img src="assets/img/marca-ai-logo.svg" alt="Marca Aí! Logo" class="nav-logo" onerror="this.src='assets/img/Marca A! Logo.svg'">
-      <span class="brand-tagline">Peladas & Quadras</span>
+      <span class="brand-tagline">Quadras Públicas & Jogos</span>
     </a>
 
     <div class="nav-search">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="search-input" placeholder="Buscar esporte, quadra, bairro...">
+      <input type="text" id="search-input" placeholder="Buscar esporte, quadra, praça, bairro...">
     </div>
 
     <div class="nav-actions">
       <button class="btn btn-primary" onclick="window.marcaApp.openCreateModal()">
         <i class="fa-solid fa-plus"></i>
-        <span>Criar Partida</span>
+        <span>Marcar Partida</span>
       </button>
 
       <a href="partidas.html" class="btn btn-outline" style="display: none;">
@@ -89,9 +89,19 @@
       <div class="sidebar-header">
         <div class="sidebar-title">
           <i class="fa-solid fa-calendar-days" style="color: var(--primary);"></i>
-          <span>Partidas Encontradas</span>
+          <span>Jogos Rolando na Região</span>
         </div>
         <span class="match-count" id="sidebar-match-count">Carregando...</span>
+      </div>
+
+      <!-- Espaço de Anúncio Patrocinado (Monetização do App) -->
+      <div style="padding: 0 1rem;">
+        <div class="ad-banner">
+          <span class="ad-badge">Anúncio</span>
+          <div class="ad-text">
+            <strong>Bolas & Artigos Esportivos:</strong> 15% OFF com o cupom <code>MARCAAI</code> na Decathlon / Lojas Locais.
+          </div>
+        </div>
       </div>
 
       <div class="sidebar-content" id="sidebar-match-list">
@@ -113,17 +123,17 @@
       <!-- Banner de Dica -->
       <div class="map-hint-banner">
         <i class="fa-solid fa-location-crosshairs" style="color: var(--accent);"></i>
-        <span>Clique em qualquer ponto do mapa para marcar uma partida na quadra!</span>
+        <span>Clique em qualquer ponto do mapa para marcar uma partida na quadra pública!</span>
       </div>
     </section>
 
     <!-- Visualização em Grade Completa (Modo Alternativo) -->
     <section class="grid-view-container" id="grid-view-container">
       <h2 style="font-family: var(--font-heading); font-size: 1.35rem; color: var(--dark-900); margin-bottom: 0.5rem;">
-        Partidas Disponíveis na Região
+        Partidas e Rachões Abertos na Sua Cidade
       </h2>
       <p style="color: var(--dark-600); font-size: 0.9rem; margin-bottom: 1.5rem;">
-        Encontre sua turma, garanta sua vaga via PIX e acabe de vez com o estresse de organizar o racha.
+        Encontre um racha rolando perto de você em parques e praças, confirme sua presença e vá jogar sem custo.
       </p>
       <div class="grid-cards" id="grid-match-list">
         <!-- Preenchido dinamicamente -->
@@ -133,14 +143,14 @@
   </main>
 
   <!-- =========================================================================
-       MODAL 1: Criar Nova Partida
+       MODAL 1: Criar / Marcar Nova Partida Pública
        ========================================================================= -->
   <div class="modal-backdrop" id="create-match-modal">
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title">
           <i class="fa-solid fa-circle-plus" style="color: var(--primary);"></i>
-          <span>Marcar Nova Partida</span>
+          <span>Marcar Partida / Jogo Aberto</span>
         </div>
         <button class="modal-close" onclick="window.marcaApp.closeCreateModal()">&times;</button>
       </div>
@@ -148,8 +158,8 @@
       <form id="create-match-form">
         <div class="modal-body">
           <div class="form-group">
-            <label class="form-label">Nome da Partida / Pelada *</label>
-            <input type="text" class="form-input" id="form-title" placeholder="Ex: Pelada dos Amigos da Sexta" required>
+            <label class="form-label">Nome da Partida / Racha *</label>
+            <input type="text" class="form-input" id="form-title" placeholder="Ex: Pelada no Parque da Sexta" required>
           </div>
 
           <div class="form-row">
@@ -179,7 +189,7 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Data *</label>
-              <input type="text" class="form-input" id="form-date" placeholder="Hoje, Sexta, ou DD/MM" required>
+              <input type="text" class="form-input" id="form-date" placeholder="Hoje, Amanhã, ou DD/MM" required>
             </div>
             <div class="form-group">
               <label class="form-label">Horário *</label>
@@ -188,43 +198,53 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Nome da Arena ou Quadra *</label>
-            <input type="text" class="form-input" id="form-venue" placeholder="Ex: Arena Play Sports - Quadra 2" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Endereço / Referência</label>
-            <input type="text" class="form-input" id="form-address" placeholder="Ex: Ao lado do Parque da Cidade">
+            <label class="form-label">Nome da Quadra / Praça / Parque *</label>
+            <input type="text" class="form-input" id="form-venue" placeholder="Ex: Quadra Poliesportiva da Praça Central" required>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Limite de Jogadores *</label>
-              <input type="number" class="form-input" id="form-max-players" value="14" min="2" max="30" required>
+              <label class="form-label">Tipo de Local Público</label>
+              <select class="form-select" id="form-court-type">
+                <option value="Quadra Pública">Quadra Pública</option>
+                <option value="Parque Municipal">Parque Municipal</option>
+                <option value="Praça de Bairro">Praça de Bairro</option>
+                <option value="Quadra de Areia Aberta">Quadra de Areia Aberta</option>
+                <option value="Ginásio Comunitário">Ginásio Comunitário</option>
+              </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Valor por Pessoa (R$) *</label>
-              <input type="number" step="0.50" class="form-input" id="form-price" value="15.00" placeholder="0 para grátis" required>
+              <label class="form-label">Vagas / Limite de Jogadores *</label>
+              <input type="number" class="form-input" id="form-max-players" value="14" min="2" max="30" required>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Chave PIX do Organizador (para cobrança automática)</label>
-            <input type="text" class="form-input" id="form-pix-key" placeholder="Telefone, e-mail, CPF ou chave aleatória">
+            <label class="form-label">Endereço ou Ponto de Referência</label>
+            <input type="text" class="form-input" id="form-address" placeholder="Ex: Ao lado do quiosque / estacionamento">
           </div>
 
-          <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" id="form-goalie-perk" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
-            <label for="form-goalie-perk" class="form-label" style="margin: 0; cursor: pointer;">
-              🧤 Vaga de incentivo para Goleiro (Goleiro joga de graça)
-            </label>
+          <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.25rem;">
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" id="form-lighting" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+              <label for="form-lighting" class="form-label" style="margin: 0; cursor: pointer;">
+                💡 Quadra possui iluminação noturna
+              </label>
+            </div>
+
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" id="form-goalie-perk" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+              <label for="form-goalie-perk" class="form-label" style="margin: 0; cursor: pointer;">
+                🧤 Vaga prioritária para Goleiro
+              </label>
+            </div>
           </div>
 
           <!-- Campos Ocultos de Coordenadas -->
           <input type="hidden" id="form-lat">
           <input type="hidden" id="form-lng">
-          <p style="font-size: 0.75rem; color: var(--dark-600);">
+          <p style="font-size: 0.75rem; color: var(--dark-600); margin-top: 0.5rem;">
             <i class="fa-solid fa-map-pin"></i> Ponto no Mapa: <span id="form-coords-display" style="font-weight: 700;">-15.7985, -47.9045</span>
           </p>
         </div>
@@ -233,7 +253,7 @@
           <button type="button" class="btn btn-outline" onclick="window.marcaApp.closeCreateModal()">Cancelar</button>
           <button type="submit" class="btn btn-primary">
             <i class="fa-solid fa-check"></i>
-            <span>Confirmar e Publicar Partida</span>
+            <span>Publicar Jogo Aberto</span>
           </button>
         </div>
       </form>
@@ -258,30 +278,38 @@
         <div class="match-hero-banner">
           <div class="match-hero-top">
             <span class="sport-tag tag-futebol" id="modal-detail-sport">Futebol Society</span>
-            <span style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 99px;" id="modal-player-count">0 / 0 vagas</span>
+            <span style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 99px;" id="modal-player-count">0 / 0 confirmados</span>
           </div>
           <div class="match-meta-pills">
             <div class="meta-pill" id="modal-detail-datetime"><i class="fa-regular fa-calendar"></i> Carregando...</div>
             <div class="meta-pill" id="modal-detail-venue"><i class="fa-solid fa-location-dot"></i> Carregando...</div>
             <div class="meta-pill" id="modal-detail-level"><i class="fa-solid fa-chart-simple"></i> Casual</div>
-            <div class="meta-pill" id="modal-detail-price"><i class="fa-solid fa-receipt"></i> R$ 15,00</div>
+            <div class="meta-pill" id="modal-detail-court" style="background: rgba(16, 185, 129, 0.3); color: #ecfdf5;"><i class="fa-solid fa-tree"></i> Quadra Pública / Acesso Livre</div>
           </div>
         </div>
 
         <!-- Botões de Ação Rápida: WhatsApp e Sorteador -->
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
           <button class="btn btn-whatsapp" onclick="window.marcaApp.shareMatchOnWhatsApp()" style="flex: 1;">
-            <i class="fa-brands fa-whatsapp"></i> Convidar no Zap (Radar Falta 1)
+            <i class="fa-brands fa-whatsapp"></i> Chamar no Zap (Radar Falta 1)
           </button>
           <button class="btn btn-outline" onclick="window.marcaApp.openSorteioModal()" style="flex: 1;">
             <i class="fa-solid fa-shuffle"></i> Sortear Times (Panela Zero)
           </button>
         </div>
 
+        <!-- Anúncio Discreto na Partida (Monetização) -->
+        <div class="ad-banner" style="margin: 0;">
+          <span class="ad-badge">Apoio</span>
+          <div class="ad-text">
+            <strong>Bebidas e Hidratação:</strong> Hidrate-se durante o jogo! Conheça as isotônicas parceiras do Marca Aí!.
+          </div>
+        </div>
+
         <!-- Seção de Jogadores Confirmados -->
         <div>
           <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--dark-900); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
-            <span><i class="fa-solid fa-users" style="color: var(--primary);"></i> Titulares Confirmados</span>
+            <span><i class="fa-solid fa-users" style="color: var(--primary);"></i> Atletas Confirmados para o Jogo</span>
             <span style="font-size: 0.75rem; color: var(--dark-600); font-weight: 500;">Ordem de confirmação</span>
           </h4>
           
@@ -295,57 +323,13 @@
       </div>
 
       <div class="modal-footer" id="modal-action-buttons">
-        <!-- Preenchido dinamicamente com botões de Quero Jogar / Pagar PIX / Desistir -->
+        <!-- Preenchido dinamicamente com botão Quero Jogar / Desistir -->
       </div>
     </div>
   </div>
 
   <!-- =========================================================================
-       MODAL 3: Pagamento PIX com QR Code Dinâmico
-       ========================================================================= -->
-  <div class="modal-backdrop" id="pix-payment-modal">
-    <div class="modal-card" style="max-width: 440px;">
-      <div class="modal-header">
-        <div class="modal-title">
-          <i class="fa-brands fa-pix" style="color: #00b4d8;"></i>
-          <span>Pagamento PIX da Vaga</span>
-        </div>
-        <button class="modal-close" onclick="window.marcaApp.closePixModal()">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="pix-box">
-          <div style="font-size: 0.85rem; color: var(--dark-600);" id="pix-modal-venue">Arena Parque</div>
-          <div style="font-size: 1.85rem; font-weight: 800; color: var(--success);" id="pix-modal-amount">R$ 15,00</div>
-          
-          <!-- Contêiner do QR Code gerado por script -->
-          <div id="qrcode-container"></div>
-          
-          <p style="font-size: 0.8rem; color: var(--dark-600); margin: 0;">
-            Escaneie o QR Code no app do seu banco ou copie o código abaixo:
-          </p>
-
-          <div class="pix-code-input">
-            <input type="text" class="form-input" id="pix-copia-e-cola" readonly style="font-size: 0.75rem; font-family: monospace;">
-            <button class="btn btn-outline" onclick="window.marcaApp.copyPixCode()" title="Copiar Código PIX">
-              <i class="fa-solid fa-copy"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer" style="justify-content: space-between;">
-        <button type="button" class="btn btn-outline" onclick="window.marcaApp.closePixModal()">Pagar Depois</button>
-        <button type="button" class="btn btn-success" onclick="window.marcaApp.simulatePixSuccess()">
-          <i class="fa-solid fa-check-double"></i>
-          <span>Simular PIX Confirmado</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       MODAL 4: Sorteador Inteligente de Times
+       MODAL 3: Sorteador Inteligente de Times
        ========================================================================= -->
   <div class="modal-backdrop" id="sorteio-modal">
     <div class="modal-card">
@@ -359,20 +343,20 @@
 
       <div class="modal-body">
         <p style="font-size: 0.85rem; color: var(--dark-600);">
-          Os jogadores confirmados foram balanceados por posição para garantir uma partida justa.
+          Os jogadores confirmados foram balanceados por posição para garantir uma partida justa e equilibrada.
         </p>
 
         <div class="teams-container">
           <div class="team-box team-1">
             <div class="team-header">
-              <span><i class="fa-solid fa-shirt"></i> TIME 1 (BRANCO)</span>
+              <span><i class="fa-solid fa-shirt"></i> TIME 1 (COLETE BRANCO)</span>
             </div>
             <div id="team-1-players"></div>
           </div>
 
           <div class="team-box team-2">
             <div class="team-header">
-              <span><i class="fa-solid fa-shirt"></i> TIME 2 (COLORIDO)</span>
+              <span><i class="fa-solid fa-shirt"></i> TIME 2 (COLETE COLORIDO)</span>
             </div>
             <div id="team-2-players"></div>
           </div>
@@ -384,15 +368,14 @@
           <i class="fa-solid fa-arrows-rotate"></i> Sortear Novamente
         </button>
         <button class="btn btn-whatsapp" onclick="window.marcaApp.copyTeamsToWhatsApp()">
-          <i class="fa-brands fa-whatsapp"></i> Copiar para o WhatsApp
+          <i class="fa-brands fa-whatsapp"></i> Copiar Escalação para o Zap
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Scripts: Leaflet, QRCode.js e Aplicação -->
+  <!-- Scripts: Leaflet e Aplicação -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
