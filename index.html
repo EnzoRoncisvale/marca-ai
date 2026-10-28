@@ -2,7 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Marca Aí! - Jogos e Quadras Públicas na sua Área</title>
   
   <!-- Fontes Google -->
@@ -48,7 +52,7 @@
       </a>
 
       <!-- Badge de Usuário -->
-      <div class="user-badge" onclick="alert('Perfil de Atleta: Lucas Silva\nNível Fair Play: 4.9 ★\nPartidas Jogadas: 24\nPosição: Meio-campo')">
+      <div class="user-badge" onclick="window.marcaApp.openProfileModal()">
         <div class="user-avatar" id="header-user-avatar">LS</div>
         <div class="user-info">
           <span class="user-name" id="header-user-name">Lucas Silva</span>
@@ -139,7 +143,13 @@
       <!-- Banner de Dica -->
       <div class="map-hint-banner">
         <i class="fa-solid fa-location-crosshairs" style="color: var(--accent);"></i>
-        <span>Clique em qualquer ponto do mapa para marcar uma partida na quadra pública!</span>
+        <span>Toque na quadra para marcar um jogo!</span>
+      </div>
+
+      <!-- Card Flutuante de Prévia da Partida (Mobile App Bottom Sheet) -->
+      <div class="mobile-match-preview" id="mobile-match-preview" style="display: none;">
+        <div class="preview-drag-handle"></div>
+        <div id="mobile-preview-content"></div>
       </div>
     </section>
 
@@ -391,6 +401,101 @@
       </div>
     </div>
   </div>
+
+  <!-- =========================================================================
+       MODAL 4: Perfil do Atleta (Padrão App Mobile)
+       ========================================================================= -->
+  <div class="modal-backdrop" id="user-profile-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-id-card" style="color: var(--primary);"></i>
+          <span>Meu Perfil de Atleta</span>
+        </div>
+        <button class="modal-close" onclick="window.marcaApp.closeProfileModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--gray-100); border-radius: var(--radius-md);">
+          <div class="user-avatar" style="width: 52px; height: 52px; font-size: 1.25rem;" id="profile-avatar">LS</div>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--dark-900); margin: 0;" id="profile-name">Lucas Silva</h3>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.35rem; align-items: center; flex-wrap: wrap;">
+              <span class="user-karma" id="profile-karma" style="font-size: 0.8rem;"><i class="fa-solid fa-star"></i> 4.9 ★ Fair Play</span>
+              <span style="font-size: 0.7rem; background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 99px; font-weight: 700;" id="profile-role">Meio-Campo</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="profile-edit-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
+          <div class="form-group">
+            <label class="form-label">Seu Nome / Apelido na Pelada *</label>
+            <input type="text" class="form-input" id="profile-input-name" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Posição Principal</label>
+              <select class="form-select" id="profile-input-role">
+                <option value="Meio-Campo">Meio-Campo</option>
+                <option value="Goleiro">Goleiro (Muralha)</option>
+                <option value="Atacante">Atacante / Pivô</option>
+                <option value="Zagueiro">Zagueiro / Fixo</option>
+                <option value="Lateral">Lateral / Ala</option>
+                <option value="Levantador">Levantador (Vôlei)</option>
+                <option value="Jogador Geral">Jogador Geral</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">WhatsApp (para confirmações)</label>
+              <input type="text" class="form-input" id="profile-input-phone" placeholder="(61) 98765-4321">
+            </div>
+          </div>
+
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.85rem; border-radius: var(--radius-md); font-size: 0.8rem; color: #166534;">
+            <i class="fa-solid fa-shield-halved"></i> <strong>Selo Fair Play Ativo:</strong> Comparecer nas peladas marcadas sem dar bolo mantém sua nota alta na comunidade.
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem; padding: 0.75rem; font-weight: 700;">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+          </button>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="window.marcaApp.closeProfileModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Barra de Navegação Inferior (Mobile App Tab Bar)
+       ========================================================================= -->
+  <nav class="mobile-bottom-nav">
+    <button class="nav-item active" data-tab="map" onclick="window.marcaApp.switchView('map')">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>Mapa</span>
+    </button>
+    <button class="nav-item" data-tab="list" onclick="window.marcaApp.switchView('list')">
+      <i class="fa-solid fa-list-ul"></i>
+      <span>Jogos</span>
+    </button>
+    <button class="nav-item nav-item-action" onclick="window.marcaApp.openCreateModal()" title="Marcar Jogo">
+      <div class="action-btn-circle">
+        <i class="fa-solid fa-plus"></i>
+      </div>
+      <span>Marcar</span>
+    </button>
+    <button class="nav-item" data-tab="my-matches" onclick="window.marcaApp.switchView('my-matches')">
+      <i class="fa-solid fa-trophy"></i>
+      <span>Meus Jogos</span>
+    </button>
+    <button class="nav-item" data-tab="profile" onclick="window.marcaApp.openProfileModal()">
+      <i class="fa-solid fa-user"></i>
+      <span>Perfil</span>
+    </button>
+  </nav>
 
   <!-- Scripts: Leaflet Local e Aplicação -->
   <script src="assets/vendor/leaflet/leaflet.js"></script>

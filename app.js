@@ -449,7 +449,43 @@ class MarcaAiApp {
     }
 
     this.renderSidebarMatches();
-    this.openMatchDetails(matchId);
+
+    if (window.innerWidth <= 768) {
+      this.showMobilePreview(match);
+    } else {
+      this.openMatchDetails(matchId);
+    }
+  }
+
+  showMobilePreview(match) {
+    const preview = document.getElementById("mobile-match-preview");
+    const content = document.getElementById("mobile-preview-content");
+    if (!preview || !content) return;
+
+    const playersCount = match.players ? match.players.length : 0;
+    const vagas = match.maxPlayers - playersCount;
+
+    content.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+        <div>
+          <span class="sport-tag tag-${match.category}">${match.sport}</span>
+          <h4 style="margin: 4px 0 0; font-size: 1.05rem; font-weight: 800; color: #0f172a;">${match.title}</h4>
+        </div>
+        <button onclick="document.getElementById('mobile-match-preview').style.display='none'" style="border:none; background:transparent; font-size: 1.3rem; color: #94a3b8; cursor: pointer; padding: 2px 6px;">&times;</button>
+      </div>
+      <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 0.75rem;">
+        <i class="fa-regular fa-calendar"></i> ${match.date} às ${match.time} | <i class="fa-solid fa-location-dot"></i> ${match.venue}
+      </p>
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: ${vagas > 0 ? '#10b981' : '#64748b'};">
+          ${vagas > 0 ? `${vagas} vagas abertas` : 'Lotado'}
+        </span>
+        <button class="btn btn-primary" style="flex: 1; padding: 0.55rem; font-size: 0.85rem;" onclick="window.marcaApp.openMatchDetails('${match.id}')">
+          <i class="fa-solid fa-users"></i> Ver Vagas & Entrar
+        </button>
+      </div>
+    `;
+    preview.style.display = "block";
   }
 
   highlightCard(matchId) {
@@ -1010,6 +1046,11 @@ class MarcaAiApp {
     if (createForm) {
       createForm.addEventListener("submit", (e) => this.handleCreateMatchSubmit(e));
     }
+
+    const profileForm = document.getElementById("profile-edit-form");
+    if (profileForm) {
+      profileForm.addEventListener("submit", (e) => this.handleProfileSubmit(e));
+    }
   }
 
   switchView(view) {
@@ -1018,11 +1059,18 @@ class MarcaAiApp {
     const gridViewContainer = document.getElementById("grid-view-container");
     const sidebar = document.getElementById("sidebar");
 
+    document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+    document.querySelectorAll(".mobile-bottom-nav .nav-item").forEach(item => {
+      item.classList.toggle("active", item.dataset.tab === view);
+    });
+
     if (view === "map") {
       if (mapViewWrapper) mapViewWrapper.style.display = "block";
-      if (sidebar) sidebar.style.display = "flex";
+      if (sidebar) sidebar.style.display = window.innerWidth <= 768 ? "none" : "flex";
       if (gridViewContainer) gridViewContainer.style.display = "none";
-      if (this.map) this.map.invalidateSize();
+      if (this.map) {
+        setTimeout(() => this.map.invalidateSize(), 150);
+      }
     } else {
       if (mapViewWrapper) mapViewWrapper.style.display = "none";
       if (sidebar) sidebar.style.display = "none";
@@ -1031,6 +1079,53 @@ class MarcaAiApp {
 
     this.renderSidebarMatches();
     this.updateCounters();
+  }
+
+  openProfileModal() {
+    const modal = document.getElementById("user-profile-modal");
+    if (!modal) return;
+
+    const avatarEl = document.getElementById("profile-avatar");
+    const nameEl = document.getElementById("profile-name");
+    const roleEl = document.getElementById("profile-role");
+    const karmaEl = document.getElementById("profile-karma");
+    const inputName = document.getElementById("profile-input-name");
+    const inputRole = document.getElementById("profile-input-role");
+    const inputPhone = document.getElementById("profile-input-phone");
+
+    if (avatarEl) avatarEl.textContent = this.currentUser.avatar || "U";
+    if (nameEl) nameEl.textContent = this.currentUser.name || "Jogador";
+    if (roleEl) roleEl.textContent = this.currentUser.position || "Jogador";
+    if (karmaEl) karmaEl.innerHTML = `<i class="fa-solid fa-star"></i> ${this.currentUser.karma || '5.0 ★'} Fair Play`;
+    if (inputName) inputName.value = this.currentUser.name || "";
+    if (inputRole) inputRole.value = this.currentUser.position || "Meio-Campo";
+    if (inputPhone) inputPhone.value = this.currentUser.phone || "";
+
+    modal.classList.add("active");
+  }
+
+  closeProfileModal() {
+    const modal = document.getElementById("user-profile-modal");
+    if (modal) modal.classList.remove("active");
+  }
+
+  handleProfileSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById("profile-input-name").value.trim();
+    const role = document.getElementById("profile-input-role").value;
+    const phone = document.getElementById("profile-input-phone").value.trim();
+
+    if (!name) return;
+
+    this.currentUser.name = name;
+    this.currentUser.position = role;
+    this.currentUser.phone = phone;
+    this.currentUser.avatar = name.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() || "AT";
+
+    this.saveUser();
+    this.updateUserUI();
+    this.closeProfileModal();
+    this.showToast("✅ Perfil de atleta atualizado!");
   }
 
   goToUserLocation() {
