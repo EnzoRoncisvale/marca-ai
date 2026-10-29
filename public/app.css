@@ -1594,3 +1594,44 @@ body {
   display: flex;
   justify-content: flex-end;
 }
+
+/* ==========================================================================
+   QUADRAS PÚBLICAS VERIFICADAS (ASA NORTE, ASA SUL & PARQUE DA CIDADE)
+   ========================================================================== */
+.custom-court-marker {
+  transition: transform 0.2s ease;
+}
+
+.custom-court-marker:hover {
+  transform: scale(1.18);
+  z-index: 999 !important;
+}
+
+.court-pin-inner {
+  background: linear-gradient(135deg, #059669, #10b981);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.45);
+  border: 2px solid #fff;
+  cursor: pointer;
+  position: relative;
+  font-size: 13px;
+}
+
+.court-pin-inner::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #059669;
+}

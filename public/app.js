@@ -21,6 +21,243 @@ const DEFAULT_USER = {
 // Sem dados de exemplo iniciais - Banco começa limpo para uso real
 const INITIAL_MATCHES = [];
 
+// =============================================================================
+// Levantamento de Quadras Públicas e Pontos Pré-Estabelecidos no DF
+// (Asa Norte, Asa Sul e Parque da Cidade Dona Sarah Kubitschek)
+// =============================================================================
+const PRESET_PUBLIC_COURTS = [
+  // --- PARQUE DA CIDADE ---
+  {
+    id: "bsb-parque-04",
+    name: "Parque da Cidade - Estacionamento 4",
+    region: "Parque da Cidade",
+    sports: ["Futsal", "Basquete", "Futebol Society"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Piso de Cimento Polido",
+    venue: "Parque da Cidade - Estacionamento 4",
+    address: "Parque da Cidade Dona Sarah Kubitschek, Estac. 4 - Brasília, DF",
+    courtType: "Parque Municipal",
+    hasLighting: true,
+    lat: -15.7972,
+    lng: -47.9022
+  },
+  {
+    id: "bsb-parque-07",
+    name: "Parque da Cidade - Estacionamento 7 (Areia)",
+    region: "Parque da Cidade",
+    sports: ["Vôlei de Areia", "Futevôlei", "Beach Tennis"],
+    defaultSport: "Vôlei",
+    category: "volei",
+    surface: "Areia de Praia",
+    venue: "Parque da Cidade - Quadras de Areia Estac. 7",
+    address: "Parque da Cidade, Estacionamento 7 - Brasília, DF",
+    courtType: "Parque Municipal",
+    hasLighting: true,
+    lat: -15.8015,
+    lng: -47.9078
+  },
+  {
+    id: "bsb-parque-10",
+    name: "Parque da Cidade - Praça das Fontes (Estac. 9/10)",
+    region: "Parque da Cidade",
+    sports: ["Basquete Streetball", "Futsal"],
+    defaultSport: "Basquete",
+    category: "basquete",
+    surface: "Piso Asfáltico Pintado",
+    venue: "Praça das Fontes - Parque da Cidade",
+    address: "Parque da Cidade, Estacionamento 9/10 - Brasília, DF",
+    courtType: "Parque Municipal",
+    hasLighting: true,
+    lat: -15.7950,
+    lng: -47.8995
+  },
+
+  // --- ASA NORTE ---
+  {
+    id: "bsb-norte-408",
+    name: "Quadra Poliesportiva da SQN 408/409",
+    region: "Asa Norte",
+    sports: ["Futsal", "Basquete Street", "Vôlei"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Concreto com Alambrado",
+    venue: "Quadra Comunitária da SQN 408/409 Norte",
+    address: "SQN 408, Área Especial - Asa Norte, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7655,
+    lng: -47.8778
+  },
+  {
+    id: "bsb-norte-104",
+    name: "Quadra Poliesportiva da SQN 104/105",
+    region: "Asa Norte",
+    sports: ["Futsal", "Vôlei"],
+    defaultSport: "Futebol Society",
+    category: "futebol",
+    surface: "Cimento Pintado",
+    venue: "Quadra Poliesportiva SQN 104/105 Norte",
+    address: "SQN 104/105, Entrequadra - Asa Norte, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7790,
+    lng: -47.8845
+  },
+  {
+    id: "bsb-norte-210",
+    name: "Quadra da SQN 210/211 (Olhos D'Água)",
+    region: "Asa Norte",
+    sports: ["Futsal", "Basquete"],
+    defaultSport: "Basquete",
+    category: "basquete",
+    surface: "Concreto com Tabelas",
+    venue: "Quadra de Esportes SQN 210/211 Norte",
+    address: "SQN 210/211 (Próximo ao Parque Olhos D'Água) - Asa Norte, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7512,
+    lng: -47.8860
+  },
+  {
+    id: "bsb-norte-315",
+    name: "Quadra de Esportes da SQN 315/316",
+    region: "Asa Norte",
+    sports: ["Futsal", "Handebol", "Vôlei"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Cimento com Traves",
+    venue: "Quadra Poliesportiva SQN 315/316 Norte",
+    address: "SQN 315/316 Norte - Asa Norte, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7380,
+    lng: -47.8965
+  },
+  {
+    id: "bsb-norte-unb",
+    name: "UnB - Centro Olímpico (Quadras Externas)",
+    region: "Asa Norte",
+    sports: ["Futsal", "Basquete", "Vôlei"],
+    defaultSport: "Basquete",
+    category: "basquete",
+    surface: "Quadras Oficiais Poliesportivas",
+    venue: "Centro Olímpico da UnB - Quadras Externas",
+    address: "Campus Universitário Darcy Ribeiro - Asa Norte, Brasília - DF",
+    courtType: "Complexo Esportivo Universitário Livre",
+    hasLighting: true,
+    lat: -15.7620,
+    lng: -47.8690
+  },
+  {
+    id: "bsb-norte-lago",
+    name: "Calçadão do Lago Norte (Areia)",
+    region: "Asa Norte / Lago",
+    sports: ["Vôlei de Praia", "Futevôlei", "Beach Tennis"],
+    defaultSport: "Beach Tennis",
+    category: "beach-tennis",
+    surface: "Areia Fina",
+    venue: "Calçadão do Lago Norte / Ponte do Bragueto",
+    address: "Orla do Lago Paranoá, Final da Asa Norte - Brasília - DF",
+    courtType: "Parque / Orla Pública",
+    hasLighting: true,
+    lat: -15.7410,
+    lng: -47.8685
+  },
+
+  // --- ASA SUL ---
+  {
+    id: "bsb-sul-104",
+    name: "Quadra Poliesportiva da SQS 104/105 Sul",
+    region: "Asa Sul",
+    sports: ["Basquete Streetball", "Futsal"],
+    defaultSport: "Basquete",
+    category: "basquete",
+    surface: "Piso Especial Streetball com Tabelas de Vidro",
+    venue: "Quadra de Basquete e Futsal SQS 104/105 Sul",
+    address: "SQS 104/105, Entrequadra - Asa Sul, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.8080,
+    lng: -47.9045
+  },
+  {
+    id: "bsb-sul-308",
+    name: "Quadra Modelo da SQS 308 Sul (Burle Marx)",
+    region: "Asa Sul",
+    sports: ["Futsal", "Vôlei"],
+    defaultSport: "Futebol Society",
+    category: "futebol",
+    surface: "Cimento e Convivência",
+    venue: "Quadra de Esportes da Superquadra Modelo 308 Sul",
+    address: "SQS 308 Sul - Asa Sul, Brasília - DF",
+    courtType: "Quadra Pública Histórica",
+    hasLighting: true,
+    lat: -15.8135,
+    lng: -47.9100
+  },
+  {
+    id: "bsb-sul-412",
+    name: "Quadra Poliesportiva da SQS 412/413 Sul",
+    region: "Asa Sul",
+    sports: ["Futsal", "Vôlei", "Basquete"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Cimento com Alambrado Completo",
+    venue: "Quadra Comunitária da SQS 412/413 Sul",
+    address: "SQS 412/413 Sul - Asa Sul, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.8340,
+    lng: -47.9150
+  },
+  {
+    id: "bsb-sul-214",
+    name: "Quadra de Esportes da SQS 214/215 Sul",
+    region: "Asa Sul",
+    sports: ["Futsal", "Basquete"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Cimento Polido",
+    venue: "Quadra Poliesportiva SQS 214/215 Sul",
+    address: "SQS 214/215 Sul - Asa Sul, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.8395,
+    lng: -47.9255
+  },
+  {
+    id: "bsb-sul-parque",
+    name: "Parque Ecológico Asa Sul (SGAS 614)",
+    region: "Asa Sul",
+    sports: ["Futsal", "Basquete", "Circuito Funcional"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Quadras Poliesportivas Integradas",
+    venue: "Parque Ecológico da Asa Sul",
+    address: "SGAS 614 Sul, Lote 100 - Asa Sul, Brasília - DF",
+    courtType: "Parque Ecológico Público",
+    hasLighting: true,
+    lat: -15.8360,
+    lng: -47.9290
+  },
+  {
+    id: "bsb-sul-cief",
+    name: "CIEF - Centro Interescolar (SGAS 907)",
+    region: "Asa Sul",
+    sports: ["Vôlei de Areia", "Basquete", "Futsal", "Atletismo"],
+    defaultSport: "Vôlei",
+    category: "volei",
+    surface: "Quadras de Areia e Poliesportivas",
+    venue: "Complexo Esportivo CIEF",
+    address: "SGAS 907 Sul, Módulo 23 - Asa Sul, Brasília - DF",
+    courtType: "Complexo Esportivo Público",
+    hasLighting: true,
+    lat: -15.8175,
+    lng: -47.9180
+  }
+];
+
 class MarcaAiApp {
   constructor() {
     this.currentUser = this.loadUser();
@@ -32,6 +269,9 @@ class MarcaAiApp {
     this.map = null;
     this.markers = {};
     this.tempPin = null;
+    this.publicCourts = PRESET_PUBLIC_COURTS;
+    this.showPublicCourts = true;
+    this.courtMarkers = {};
 
     this.init();
   }
@@ -99,6 +339,7 @@ class MarcaAiApp {
     this.initMap();
     await this.loadMatches();
     this.renderSidebarMatches();
+    this.renderPublicCourtMarkers();
     this.renderMapMarkers();
     this.bindEvents();
     this.updateCounters();
@@ -330,6 +571,146 @@ class MarcaAiApp {
       const group = new L.featureGroup(Object.values(this.markers));
       this.map.fitBounds(group.getBounds().pad(0.3));
     }
+  }
+
+  // ===========================================================================
+  // Quadras Públicas Verificadas (DF: Asa Norte, Asa Sul, Parque da Cidade)
+  // ===========================================================================
+  renderPublicCourtMarkers() {
+    if (!this.map) return;
+    Object.values(this.courtMarkers).forEach(m => this.map.removeLayer(m));
+    this.courtMarkers = {};
+
+    if (!this.showPublicCourts) return;
+
+    this.publicCourts.forEach(court => {
+      const courtIcon = L.divIcon({
+        className: 'custom-court-marker',
+        html: `
+          <div class="court-pin-inner" title="${court.name}">
+            <i class="fa-solid fa-landmark-dome"></i>
+          </div>
+        `,
+        iconSize: [32, 36],
+        iconAnchor: [16, 36],
+        popupAnchor: [0, -32]
+      });
+
+      const marker = L.marker([court.lat, court.lng], { icon: courtIcon }).addTo(this.map);
+
+      marker.bindPopup(`
+        <div style="font-family: Montserrat, sans-serif; padding: 4px; min-width: 220px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-size: 10px; background: #ecfdf5; color: #047857; font-weight: 700; padding: 2px 6px; border-radius: 4px;">
+              🏟️ Quadra Pública DF
+            </span>
+            <span style="font-size: 10px; color: #64748b; font-weight: 600;">${court.region}</span>
+          </div>
+          <h4 style="margin: 4px 0 2px; font-size: 13px; font-weight: 800; color: #0f172a;">${court.name}</h4>
+          <p style="margin: 0 0 6px; font-size: 11px; color: #64748b;"><i class="fa-solid fa-location-dot"></i> ${court.address}</p>
+          <div style="background: #f8fafc; border-radius: 6px; padding: 6px; margin-bottom: 8px; font-size: 11px; display: flex; flex-direction: column; gap: 2px;">
+            <div><strong>Esportes:</strong> ${court.sports.join(", ")}</div>
+            <div><strong>Piso:</strong> ${court.surface}</div>
+            <div>${court.hasLighting ? '💡 Iluminação Noturna Ativa' : '☀️ Uso Diurno'}</div>
+          </div>
+          <button onclick="window.marcaApp.openCreateModalWithPreset('${court.id}')" style="
+            width: 100%;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.35);
+          ">
+            ⚽ Marcar Partida Nesta Quadra
+          </button>
+        </div>
+      `);
+
+      this.courtMarkers[court.id] = marker;
+    });
+  }
+
+  togglePublicCourts() {
+    this.showPublicCourts = !this.showPublicCourts;
+    this.renderPublicCourtMarkers();
+    const btn = document.getElementById("btn-toggle-courts");
+    if (btn) {
+      if (this.showPublicCourts) {
+        btn.style.background = "rgba(16, 185, 129, 0.25)";
+        btn.style.color = "#a7f3d0";
+        this.showToast(`🏟️ Exibindo ${this.publicCourts.length} quadras públicas de Brasília.`);
+      } else {
+        btn.style.background = "rgba(15, 23, 42, 0.6)";
+        btn.style.color = "#94a3b8";
+        this.showToast("Camada de quadras públicas ocultada.");
+      }
+    }
+  }
+
+  openCreateModalWithPreset(courtId) {
+    const court = this.publicCourts.find(c => c.id === courtId);
+    if (!court) return;
+
+    this.openCreateModal(court.lat, court.lng);
+    this.onSelectPresetCourt(courtId);
+  }
+
+  onSelectPresetCourt(courtId) {
+    const court = this.publicCourts.find(c => c.id === courtId);
+    if (!court) return;
+
+    const selectEl = document.getElementById("form-preset-court");
+    if (selectEl) selectEl.value = courtId;
+
+    const titleEl = document.getElementById("form-title");
+    if (titleEl && (!titleEl.value || titleEl.value.startsWith("Partida") || titleEl.value.startsWith("Racha"))) {
+      titleEl.value = `Racha no ${court.name.split(" - ")[0]}`;
+    }
+
+    const venueEl = document.getElementById("form-venue");
+    if (venueEl) venueEl.value = court.venue;
+
+    const addressEl = document.getElementById("form-address");
+    if (addressEl) addressEl.value = court.address;
+
+    const courtTypeEl = document.getElementById("form-court-type");
+    if (courtTypeEl) courtTypeEl.value = court.courtType;
+
+    const lightingEl = document.getElementById("form-lighting");
+    if (lightingEl) lightingEl.checked = court.hasLighting;
+
+    const latEl = document.getElementById("form-lat");
+    if (latEl) latEl.value = court.lat;
+
+    const lngEl = document.getElementById("form-lng");
+    if (lngEl) lngEl.value = court.lng;
+
+    const coordsDisplay = document.getElementById("form-coords-display");
+    if (coordsDisplay) {
+      coordsDisplay.textContent = `${court.lat.toFixed(4)}, ${court.lng.toFixed(4)} (${court.name})`;
+    }
+
+    // Seleciona modalidade correspondente no select
+    const sportEl = document.getElementById("form-sport");
+    if (sportEl) {
+      for (let i = 0; i < sportEl.options.length; i++) {
+        if (sportEl.options[i].value.toLowerCase().includes(court.defaultSport.toLowerCase())) {
+          sportEl.selectedIndex = i;
+          break;
+        }
+      }
+    }
+
+    // Se o mapa estiver aberto, navega até a quadra
+    if (this.map) {
+      this.map.flyTo([court.lat, court.lng], 16, { duration: 1.2 });
+    }
+
+    this.showToast(`📍 Quadra "${court.name}" selecionada com sucesso!`);
   }
 
   handleMapClick(latlng) {

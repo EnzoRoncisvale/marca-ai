@@ -122,13 +122,14 @@
       <!-- Barra Flutuante de Atalhos de Brasília e Seletor de Tema -->
       <div class="bsb-regions-bar">
         <span class="bsb-regions-label"><i class="fa-solid fa-location-dot"></i> Brasília:</span>
-        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7538, -47.8839, 14)">Asa Norte</button>
-        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8200, -48.0650, 14)">Taguaparque</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8150, -47.9150, 14)">Asa Sul</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8360, -48.0280, 14)">Águas Claras</button>
-        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8285, -47.8790, 14)">Deck Sul</button>
-        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8235, -47.9805, 14)">Guará</button>
-        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8190, -48.1100, 14)">Ceilândia</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8200, -48.0650, 14)">Taguatinga</button>
+        <button class="bsb-region-btn" id="btn-toggle-courts" style="background: rgba(16, 185, 129, 0.25); border: 1px solid #10b981; color: #a7f3d0; font-weight: 700;" onclick="window.marcaApp.togglePublicCourts()">
+          <i class="fa-solid fa-landmark-dome"></i> Quadras DF (15)
+        </button>
         <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.25); margin: 0 4px;"></div>
         <button class="bsb-region-btn map-theme-btn active" data-theme="noturno" onclick="window.marcaApp.setMapTheme('noturno')">🌙 Noturno</button>
         <button class="bsb-region-btn map-theme-btn" data-theme="satelite" onclick="window.marcaApp.setMapTheme('satelite')">🛰️ Satélite</button>
@@ -187,6 +188,41 @@
 
       <form id="create-match-form">
         <div class="modal-body">
+          <!-- Ponto Pré-Estabelecido / Levantamento de Quadras Públicas de Brasília -->
+          <div class="form-group" style="background: #f8fafc; border: 1.5px dashed #cbd5e1; padding: 0.85rem; border-radius: 10px;">
+            <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span><i class="fa-solid fa-landmark-dome" style="color: #10b981;"></i> Ponto Pré-Estabelecido (Quadra Pública Verificada)</span>
+              <span style="font-size: 0.68rem; background: #dcfce7; color: #15803d; font-weight: 800; padding: 2px 6px; border-radius: 4px;">Preenchimento Rápido</span>
+            </label>
+            <select class="form-select" id="form-preset-court" onchange="window.marcaApp.onSelectPresetCourt(this.value)" style="border-color: #94a3b8; font-weight: 600;">
+              <option value="">-- Selecione uma quadra pública da Asa Norte, Sul ou Parque --</option>
+              <optgroup label="📍 PARQUE DA CIDADE (Dona Sarah Kubitschek)">
+                <option value="bsb-parque-04">Estacionamento 4 - Futsal & Basquete</option>
+                <option value="bsb-parque-07">Estacionamento 7 - Vôlei de Praia & Areia</option>
+                <option value="bsb-parque-10">Praça das Fontes (Estac. 9/10) - Streetball</option>
+              </optgroup>
+              <optgroup label="📍 ASA NORTE">
+                <option value="bsb-norte-408">SQN 408/409 Norte - Quadra Poliesportiva Comunitária</option>
+                <option value="bsb-norte-104">SQN 104/105 Norte - Quadra de Futsal</option>
+                <option value="bsb-norte-210">SQN 210/211 Norte (Praça Olhos D'Água) - Basquete/Futsal</option>
+                <option value="bsb-norte-315">SQN 315/316 Norte - Quadra de Esportes</option>
+                <option value="bsb-norte-unb">UnB - Centro Olímpico (Quadras Externas Abertas)</option>
+                <option value="bsb-norte-lago">Calçadão do Lago Norte / Ponte do Bragueto (Areia)</option>
+              </optgroup>
+              <optgroup label="📍 ASA SUL">
+                <option value="bsb-sul-104">SQS 104/105 Sul - Ponto Histórico de Basquete & Futsal</option>
+                <option value="bsb-sul-308">SQS 308 Sul - Quadra Modelo (Burle Marx)</option>
+                <option value="bsb-sul-412">SQS 412/413 Sul - Quadra Poliesportiva</option>
+                <option value="bsb-sul-214">SQS 214/215 Sul - Quadra da Entrequadra</option>
+                <option value="bsb-sul-parque">Parque Ecológico Asa Sul (SGAS 614) - Poliesportiva</option>
+                <option value="bsb-sul-cief">CIEF (SGAS 907 Sul) - Complexo Esportivo Público</option>
+              </optgroup>
+            </select>
+            <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.35rem;">
+              * Ao selecionar, preenchemos o local, endereço e as coordenadas no mapa automaticamente!
+            </div>
+          </div>
+
           <div class="form-group">
             <label class="form-label">Nome da Partida / Racha *</label>
             <input type="text" class="form-input" id="form-title" placeholder="Ex: Pelada no Parque da Sexta" required>
