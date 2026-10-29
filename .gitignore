@@ -1,1 +1,16 @@
-/AIzaSyClKCb3V1EvFceZILU-A8T4h9RQy0zBzYU
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+env/
+venv/
+ENV/
+
+# SQLite & local database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS generated
+.DS_Store
+Thumbs.db
