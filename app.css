@@ -15,14 +15,14 @@
   --warning: #f59e0b;
   --danger: #ef4444;
   
-  --dark-900: #0f172a;
-  --dark-800: #1e293b;
-  --dark-700: #334155;
-  --dark-600: #475569;
-  --gray-200: #e2e8f0;
-  --gray-100: #f1f5f9;
-  --gray-50: #f8fafc;
-  --white: #ffffff;
+  --dark-900: #ffffff;
+  --dark-800: #f8fafc;
+  --dark-700: #e2e8f0;
+  --dark-600: #94a3b8;
+  --gray-200: #1e293b;
+  --gray-100: #141b2b;
+  --gray-50: #090d16;
+  --white: #111827;
 
   --font-heading: 'Montserrat', sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -55,8 +55,8 @@ html, body {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--gray-50);
-  color: var(--dark-800);
+  background-color: #090d16;
+  color: #f1f5f9;
   min-height: 100vh;
   min-height: 100dvh;
   height: 100vh;
@@ -73,7 +73,7 @@ body {
 
 .navbar {
   flex-shrink: 0;
-  background: var(--white);
+  background: #0f172a;
   border-bottom: 1px solid var(--gray-200);
   padding: 0.75rem 1.5rem;
   display: flex;
@@ -120,7 +120,7 @@ body {
 .nav-search {
   display: flex;
   align-items: center;
-  background: var(--gray-100);
+  background: #090d16;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-full);
   padding: 0.4rem 1rem;
@@ -271,7 +271,7 @@ body {
 
 .filter-bar {
   flex-shrink: 0;
-  background: var(--white);
+  background: #0f172a;
   border-bottom: 1px solid var(--gray-200);
   padding: 0.6rem 1.5rem;
   display: flex;
@@ -366,7 +366,7 @@ body {
 
 .sidebar {
   width: 440px;
-  background: var(--white);
+  background: #090d16;
   border-right: 1px solid var(--gray-200);
   display: flex;
   flex-direction: column;
@@ -443,7 +443,7 @@ body {
 
 /* Match Card */
 .match-card {
-  background: var(--white);
+  background: #111827;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-md);
   padding: 1rem;
@@ -456,9 +456,10 @@ body {
 }
 
 .match-card:hover {
-  border-color: var(--accent);
+  border-color: var(--primary);
+  background: #172238;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .match-card.active {
@@ -568,11 +569,11 @@ body {
   width: 100% !important;
   height: 100% !important;
   z-index: 1;
-  background-color: #ffffff !important;
+  background-color: #090d16 !important;
 }
 
 .leaflet-container {
-  background-color: #ffffff !important;
+  background-color: #090d16 !important;
 }
 
 /* Mapa com renderização nativa de tiles (sem filtros CSS destrutivos) */
@@ -586,11 +587,11 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(15, 23, 42, 0.94);
   backdrop-filter: blur(10px);
   padding: 0.4rem 0.7rem;
   border-radius: var(--radius-full);
-  border: 1px solid var(--gray-200);
+  border: 1px solid #1e293b;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   max-width: calc(100% - 120px);
   overflow-x: auto;
@@ -613,9 +614,9 @@ body {
 }
 
 .bsb-region-btn {
-  background: var(--gray-100);
-  color: var(--dark-700);
-  border: 1px solid var(--gray-200);
+  background: #111827;
+  color: #e2e8f0;
+  border: 1px solid #1e293b;
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-full);
   font-size: 0.75rem;
@@ -767,7 +768,7 @@ body {
 }
 
 .modal-card {
-  background: var(--white);
+  background: #111827;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   max-width: 600px;
@@ -1038,7 +1039,7 @@ body {
   left: 0;
   right: 0;
   height: 62px;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(9, 13, 22, 0.96);
   backdrop-filter: blur(16px);
   border-top: 1px solid var(--gray-200);
   z-index: 1500;

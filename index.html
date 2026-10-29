@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#090d16">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -41,9 +41,6 @@
     </div>
 
     <div class="nav-actions">
-      <button type="button" class="theme-toggle-btn nav-theme-btn" id="btn-theme-toggle-nav" onclick="window.marcaApp.toggleDarkMode()" title="Alternar Modo Escuro / Claro">
-        <i class="fa-solid fa-moon"></i>
-      </button>
       <button class="btn btn-primary" onclick="window.marcaApp.openCreateModal()">
         <i class="fa-solid fa-plus"></i>
         <span>Marcar Partida</span>
@@ -84,10 +81,6 @@
     </div>
 
     <div class="view-toggle">
-      <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" onclick="window.marcaApp.toggleDarkMode()" title="Alternar Modo Escuro / Claro">
-        <i class="fa-solid fa-moon"></i>
-      </button>
-      <div class="theme-toggle-divider"></div>
       <button class="view-btn active" data-view="map"><i class="fa-solid fa-map-location-dot"></i> Mapa</button>
       <button class="view-btn" data-view="list"><i class="fa-solid fa-grip"></i> Grade</button>
       <button class="view-btn" data-view="my-matches"><i class="fa-solid fa-user-check"></i> Minhas Partidas</button>
@@ -134,10 +127,10 @@
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8360, -48.0280, 14)">Águas Claras</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8200, -48.0650, 14)">Taguatinga</button>
-        <button class="bsb-region-btn" id="btn-toggle-courts" style="background: #ecfdf5; border: 1px solid #10b981; color: #047857; font-weight: 700;" onclick="window.marcaApp.togglePublicCourts()">
+        <button class="bsb-region-btn" id="btn-toggle-courts" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #a7f3d0; font-weight: 700;" onclick="window.marcaApp.togglePublicCourts()">
           <i class="fa-solid fa-landmark-dome"></i> Quadras DF (15)
         </button>
-        <div style="width: 1px; height: 16px; background: #cbd5e1; margin: 0 4px;"></div>
+        <div style="width: 1px; height: 16px; background: #334155; margin: 0 4px;"></div>
         <button class="bsb-region-btn map-theme-btn active" data-theme="ruas" onclick="window.marcaApp.setMapTheme('ruas')">🗺️ Ruas</button>
         <button class="bsb-region-btn map-theme-btn" data-theme="satelite" onclick="window.marcaApp.setMapTheme('satelite')">🛰️ Satélite</button>
         </div>

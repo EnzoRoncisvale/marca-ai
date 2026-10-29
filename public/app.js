@@ -400,7 +400,7 @@ class MarcaAiApp {
     if (savedTheme === "dark") {
       noturnoLayer.addTo(this.map);
     } else {
-      ruasLayer.addTo(this.map);
+      noturnoLayer.addTo(this.map);
     }
 
     // Seletor de Camadas nativo do Leaflet (apenas Ruas e Satelite)
