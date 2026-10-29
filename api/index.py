@@ -146,6 +146,26 @@ class handler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, status=500)
             return
 
+        # Gerenciar checklist de materiais (/api/partidas/<id>/checklist)
+        if "/checklist" in path:
+            parts = path.strip("/").split("/")
+            try:
+                idx = parts.index("partidas")
+                partida_id = parts[idx + 1]
+            except Exception:
+                partida_id = parts[-2]
+            action = data.get("action", "claim")
+            item_id = data.get("itemId")
+            user_id = data.get("userId")
+            user_name = data.get("userName")
+            custom_name = data.get("customName")
+            try:
+                ok, msg, items = db.update_checklist_item(partida_id, item_id, user_id, user_name, action, custom_name)
+                self._send_json({"success": ok, "message": msg, "checklist": items}, status=200 if ok else 400)
+            except Exception as e:
+                self._send_json({"error": str(e)}, status=500)
+            return
+
         self._send_json({"error": f"Endpoint POST {path} não encontrado"}, status=404)
 
     def do_DELETE(self):

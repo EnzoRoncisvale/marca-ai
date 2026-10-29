@@ -68,6 +68,10 @@
   <div class="filter-bar">
     <div class="filter-pills">
       <button class="pill active" data-sport="todos"><i class="fa-solid fa-border-all"></i> Todos os Esportes</button>
+      <button class="pill pill-radar" data-sport="radar" title="Partidas com vagas abertas precisando de atletas com urgência">
+        <span class="radar-dot"></span>
+        <i class="fa-solid fa-bolt-lightning"></i> Radar Falta 1
+      </button>
       <button class="pill" data-sport="futebol"><i class="fa-solid fa-futbol"></i> Futebol Society</button>
       <button class="pill" data-sport="futsal"><i class="fa-solid fa-futbol"></i> Futsal</button>
       <button class="pill" data-sport="basquete"><i class="fa-solid fa-basketball"></i> Basquete</button>
@@ -331,6 +335,28 @@
           <span class="ad-badge">Apoio</span>
           <div class="ad-text">
             <strong>Bebidas e Hidratação:</strong> Hidrate-se durante o jogo! Conheça as isotônicas parceiras do Marca Aí!.
+          </div>
+        </div>
+
+        <!-- Checklist de Materiais do Jogo ("Quem leva o quê?") -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <div class="checklist-title">
+              <i class="fa-solid fa-clipboard-check"></i>
+              <span>Quem Leva o Quê? (Checklist de Materiais)</span>
+            </div>
+            <span class="checklist-status-badge pendente" id="modal-checklist-status">Carregando...</span>
+          </div>
+          <p class="checklist-subtitle">Evite surpresas na quadra! Assuma a responsabilidade por um material ou veja o que está pendente.</p>
+          
+          <div class="checklist-items-grid" id="modal-checklist-items">
+            <!-- Preenchido dinamicamente via app.js -->
+          </div>
+          
+          <div class="checklist-add-row">
+            <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 10px;" onclick="window.marcaApp.promptAddChecklistItem()">
+              <i class="fa-solid fa-plus"></i> Adicionar Outro Material
+            </button>
           </div>
         </div>
 

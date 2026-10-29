@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS partidas (
     max_players INTEGER NOT NULL DEFAULT 14,
     has_goalie_perk INTEGER DEFAULT 0,
     organizer_id TEXT NOT NULL,
+    checklist TEXT DEFAULT '[]',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -240,37 +240,46 @@ class MarcaAiApp {
       const isUrgente = vagasRestantes <= 2 && vagasRestantes > 0;
       const badgeBg = isUrgente ? '#ef4444' : (vagasRestantes === 0 ? '#64748b' : '#10b981');
 
+      const isRadar = this.isRadarMatch(match);
+      const radarRings = isRadar ? `
+        <span class="marker-radar-ring"></span>
+        <span class="marker-radar-ring delay"></span>
+      ` : '';
+
       const customIcon = L.divIcon({
         className: 'custom-leaflet-marker',
         html: `
-          <div style="
-            background: linear-gradient(135deg, #ae2012, #ee9b00);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 2px solid #fff;
-            cursor: pointer;
-            position: relative;
-            font-size: 16px;
-          ">
-            <i class="fa-solid ${this.getSportIcon(match.category)}"></i>
-            <span style="
-              position: absolute;
-              top: -6px;
-              right: -6px;
-              background: ${badgeBg};
-              color: white;
-              font-size: 10px;
-              font-weight: 800;
-              padding: 2px 5px;
-              border-radius: 10px;
-              border: 1px solid white;
-            ">${vagasRestantes > 0 ? vagasRestantes : 'Full'}</span>
+          <div style="position: relative; width: 40px; height: 40px;">
+            ${radarRings}
+            <div style="
+              background: ${isRadar ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #ae2012, #ee9b00)'};
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #fff;
+              box-shadow: 0 4px 12px ${isRadar ? 'rgba(239, 68, 68, 0.55)' : 'rgba(0,0,0,0.3)'};
+              border: 2px solid #fff;
+              cursor: pointer;
+              position: relative;
+              font-size: 16px;
+            ">
+              <i class="fa-solid ${this.getSportIcon(match.category)}"></i>
+              <span style="
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                background: ${badgeBg};
+                color: white;
+                font-size: 10px;
+                font-weight: 800;
+                padding: 2px 5px;
+                border-radius: 10px;
+                border: 1px solid white;
+              ">${isRadar ? `🚨 ${vagasRestantes}v` : (vagasRestantes > 0 ? vagasRestantes : 'Full')}</span>
+            </div>
           </div>
         `,
         iconSize: [40, 40],
@@ -354,11 +363,24 @@ class MarcaAiApp {
   // ===========================================================================
   // 5. Filtros & Listagem Lateral / Grade
   // ===========================================================================
+  isRadarMatch(match) {
+    const playersCount = match.players ? match.players.length : 0;
+    const vagas = match.maxPlayers - playersCount;
+    return vagas > 0 && vagas <= 2;
+  }
+
   getFilteredMatches() {
     return this.matches.filter(match => {
-      const matchesCategory = (this.activeFilter === "todos") || 
-        (this.activeFilter === match.category) ||
-        (this.activeFilter === "futebol" && (match.category === "futebol" || match.category === "futsal"));
+      let matchesCategory = false;
+      if (this.activeFilter === "radar") {
+        matchesCategory = this.isRadarMatch(match);
+      } else if (this.activeFilter === "todos") {
+        matchesCategory = true;
+      } else if (this.activeFilter === "futebol") {
+        matchesCategory = (match.category === "futebol" || match.category === "futsal");
+      } else {
+        matchesCategory = (this.activeFilter === match.category);
+      }
 
       const query = this.searchQuery.toLowerCase();
       const matchesSearch = !query || 
@@ -420,9 +442,30 @@ class MarcaAiApp {
     }
 
     const isUserIn = match.players && match.players.some(p => p.id === this.currentUser.id);
+    const isRadar = this.isRadarMatch(match);
+
+    const radarBanner = isRadar ? `
+      <div class="radar-card-badge">
+        <span class="radar-dot"></span>
+        <span><strong>RADAR FALTA ${vagasRestantes}:</strong> Jogo precisa de você agora!</span>
+      </div>
+    ` : '';
+
+    const checklist = match.checklist || [];
+    const missingEssential = checklist.filter(it => it.isEssential && !it.assignedTo);
+    let missingBadge = '';
+    if (missingEssential.length > 0) {
+      const names = missingEssential.map(it => it.name.split(" ")[0]).slice(0, 2).join(", ");
+      missingBadge = `
+        <div class="missing-materials-badge">
+          <i class="fa-solid fa-triangle-exclamation"></i> Falta: ${names}
+        </div>
+      `;
+    }
 
     return `
-      <div class="match-card ${this.selectedMatchId === match.id ? 'active' : ''}" id="card-${match.id}" onclick="window.marcaApp.selectMatch('${match.id}')">
+      <div class="match-card ${this.selectedMatchId === match.id ? 'active' : ''} ${isRadar ? 'match-card-radar' : ''}" id="card-${match.id}" onclick="window.marcaApp.selectMatch('${match.id}')">
+        ${radarBanner}
         <div class="card-top">
           <div class="card-title">${match.title}</div>
           <span class="sport-tag tag-${match.category}">${match.sport}</span>
@@ -444,9 +487,12 @@ class MarcaAiApp {
         </div>
 
         <div class="card-footer">
-          <div class="vagas-badge ${vagaClass}">
-            <i class="fa-solid fa-users"></i>
-            <span>${vagaTexto}</span>
+          <div style="display: flex; flex-direction: column;">
+            <div class="vagas-badge ${vagaClass}">
+              <i class="fa-solid fa-users"></i>
+              <span>${vagaTexto}</span>
+            </div>
+            ${missingBadge}
           </div>
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             ${isUserIn ? '<span style="background: #ecfdf5; color: #10b981; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Confirmado</span>' : ''}
@@ -681,6 +727,7 @@ class MarcaAiApp {
     document.getElementById("modal-detail-court").innerHTML = `<i class="fa-solid fa-tree"></i> ${match.courtType || 'Quadra Pública / Acesso Livre'}`;
 
     this.renderPlayerList(match);
+    this.renderChecklist(match);
     this.updateModalActions(match);
 
     modal.classList.add("active");
@@ -689,6 +736,139 @@ class MarcaAiApp {
   closeMatchDetails() {
     const modal = document.getElementById("match-details-modal");
     if (modal) modal.classList.remove("active");
+  }
+
+  renderChecklist(match) {
+    const container = document.getElementById("modal-checklist-items");
+    const statusEl = document.getElementById("modal-checklist-status");
+    if (!container || !statusEl) return;
+
+    const items = match.checklist || [];
+    if (items.length === 0) {
+      container.innerHTML = `<p style="font-size: 0.8rem; color: #64748b; margin: 0.5rem 0;">Nenhum material listado para esta partida.</p>`;
+      statusEl.className = "checklist-status-badge pronto";
+      statusEl.textContent = "Sem pendências";
+      return;
+    }
+
+    const missingEssential = items.filter(it => it.isEssential && !it.assignedTo);
+
+    if (missingEssential.length === 0) {
+      statusEl.className = "checklist-status-badge pronto";
+      statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Materiais Essenciais Prontos!`;
+    } else {
+      statusEl.className = "checklist-status-badge pendente";
+      statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Faltam ${missingEssential.length} essenciais`;
+    }
+
+    container.innerHTML = items.map(item => {
+      const isClaimed = !!item.assignedTo;
+      const isClaimedByMe = item.assignedTo === this.currentUser.id;
+
+      let actionHtml = '';
+      if (isClaimedByMe) {
+        actionHtml = `
+          <button type="button" class="btn-release-item" onclick="window.marcaApp.toggleChecklistItem('${match.id}', '${item.id}', 'release')">
+            <i class="fa-solid fa-xmark"></i> Não vou levar
+          </button>
+        `;
+      } else if (isClaimed) {
+        actionHtml = `
+          <span class="badge-assigned-other">
+            <i class="fa-solid fa-circle-check"></i> ${item.assignedName ? item.assignedName.split(" ")[0] : 'Confirmado'}
+          </span>
+        `;
+      } else {
+        actionHtml = `
+          <button type="button" class="btn-claim-item" onclick="window.marcaApp.toggleChecklistItem('${match.id}', '${item.id}', 'claim')">
+            <i class="fa-solid fa-hand-holding-hand"></i> Eu Levo!
+          </button>
+        `;
+      }
+
+      const statusText = isClaimed
+        ? `Garantido por: <strong>${item.assignedName}</strong>`
+        : `<span style="color: #b45309;">Ninguém assumiu ainda ${item.isEssential ? '<strong>(Essencial!)</strong>' : ''}</span>`;
+
+      return `
+        <div class="checklist-item ${isClaimed ? 'claimed' : ''}">
+          <div class="checklist-item-left">
+            <div class="checklist-item-icon">
+              <i class="fa-solid ${item.icon || 'fa-box'}"></i>
+            </div>
+            <div class="checklist-item-info">
+              <span class="checklist-item-name">
+                ${item.name}
+                ${item.isEssential ? '<span style="font-size: 0.65rem; background: #fee2e2; color: #b91c1c; padding: 1px 5px; border-radius: 4px; font-weight: 700;">Essencial</span>' : ''}
+              </span>
+              <span class="checklist-item-status">${statusText}</span>
+            </div>
+          </div>
+          <div>${actionHtml}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  async toggleChecklistItem(matchId, itemId, action, customName = null) {
+    const match = this.matches.find(m => m.id === matchId);
+    if (!match) return;
+
+    match.checklist = match.checklist || [];
+
+    if (action === "claim") {
+      const item = match.checklist.find(i => i.id === itemId);
+      if (item) {
+        item.assignedTo = this.currentUser.id;
+        item.assignedName = this.currentUser.name;
+        this.showToast(`🎒 Valeu! Você vai levar: ${item.name}`);
+      }
+    } else if (action === "release") {
+      const item = match.checklist.find(i => i.id === itemId);
+      if (item) {
+        item.assignedTo = null;
+        item.assignedName = null;
+        this.showToast("Material liberado para outro atleta levar.");
+      }
+    } else if (action === "add" && customName) {
+      match.checklist.push({
+        id: "item-" + Date.now(),
+        name: customName,
+        icon: "fa-box",
+        isEssential: false,
+        assignedTo: this.currentUser.id,
+        assignedName: this.currentUser.name
+      });
+      this.showToast(`🎒 Material "${customName}" adicionado e assumido por você!`);
+    }
+
+    this.saveLocalCache();
+    this.renderChecklist(match);
+    this.renderSidebarMatches();
+
+    // Sincroniza com a API SQLite
+    try {
+      await fetch(`/api/partidas/${matchId}/checklist`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonPayload({
+          action,
+          itemId,
+          userId: this.currentUser.id,
+          userName: this.currentUser.name,
+          customName
+        })
+      });
+    } catch (e) {
+      console.log("Sincronização offline do checklist.");
+    }
+  }
+
+  promptAddChecklistItem() {
+    const name = prompt("Qual material você quer levar ou solicitar para a partida? (ex: Caixa de Gelo, Apito, Calibrador):");
+    if (name && name.trim()) {
+      this.toggleChecklistItem(this.selectedMatchId, null, "add", name.trim());
+    }
   }
 
   renderPlayerList(match) {
@@ -1010,16 +1190,33 @@ class MarcaAiApp {
 
     const playersCount = match.players ? match.players.length : 0;
     const vagasRestantes = match.maxPlayers - playersCount;
-    let urgencia = vagasRestantes <= 2 && vagasRestantes > 0 ? "🔥 *FALTA POUCO / CONVOCAÇÃO URGENTE!* 🔥\n\n" : "";
+    const isRadar = vagasRestantes <= 2 && vagasRestantes > 0;
 
-    let message = `${urgencia}⚽ *${match.title.toUpperCase()}* (${match.sport})\n`;
-    message += `📅 *Quando:* ${match.date} às ${match.time}\n`;
-    message += `📍 *Onde:* ${match.venue} (${match.courtType || 'Quadra Pública'})\n`;
-    message += `👥 *Vagas Restantes:* ${vagasRestantes > 0 ? `${vagasRestantes} vagas abertas!` : 'Lotado (Lista de Espera)'}\n`;
-    message += `🎉 *Partida Gratuita e Aberta!*\n\n`;
-    message += `👉 *Confirme sua presença no racha:* https://marca-ai.app/p/${match.id}`;
+    let message = "";
+    if (isRadar) {
+      message += "🚨 *RADAR FALTA " + vagasRestantes + " - CHAMADA DE EMERGÊNCIA!* 🚨\n";
+      message += "Galera, estamos precisando com urgência de atleta(s) para fechar o racha hoje!\n\n";
+    } else {
+      message += "⚽ *MARCA AÍ! - BORA PRO JOGO?* ⚽\n\n";
+    }
 
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    message += "🏆 *" + match.title.toUpperCase() + "* (" + match.sport + ")\n";
+    message += "📅 *Quando:* " + match.date + " às " + match.time + "\n";
+    message += "📍 *Onde:* " + match.venue + " (" + (match.address || 'Brasília - DF') + ")\n";
+    message += "👥 *Vagas Restantes:* " + (vagasRestantes > 0 ? (vagasRestantes + " vaga(s) aberta(s)!") : "Lotado (Lista de Espera)") + "\n";
+    message += "🌳 *Acesso:* " + (match.courtType || "Quadra Pública / Gratuito") + "\n\n";
+
+    if (match.checklist && match.checklist.length > 0) {
+      message += "🎒 *Checklist de Materiais:*\n";
+      match.checklist.forEach(it => {
+        message += " • " + it.name + ": " + (it.assignedName ? ("✅ (" + it.assignedName.split(" ")[0] + ")") : "⚠️ *Falta alguém levar!*") + "\n";
+      });
+      message += "\n";
+    }
+
+    message += "👉 *Confirme sua presença no racha:* https://marca-ai-kappa.vercel.app/";
+
+    const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(message);
     window.open(url, "_blank");
   }
 
