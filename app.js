@@ -1,4 +1,4 @@
-/**
+﻿/**
  * MARCA AÍ! - Core Application Engine
  * Plataforma Comunitária de Marcação e Descoberta de Partidas em Quadras Públicas
  * Integração com Banco de Dados SQLite (sem exemplos falsos)
@@ -493,7 +493,7 @@ class MarcaAiApp {
           <div style="position: relative; width: 40px; height: 40px;">
             ${radarRings}
             <div style="
-              background: ${isRadar ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #ae2012, #ee9b00)'};
+              background: ${isRadar ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #dc2626, #e11d48)'};
               width: 40px;
               height: 40px;
               border-radius: 50%;
@@ -533,7 +533,7 @@ class MarcaAiApp {
       marker.bindPopup(`
         <div style="font-family: Montserrat, sans-serif; padding: 4px; min-width: 200px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #ae2012;">${match.sport}</span>
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #dc2626;">${match.sport}</span>
             <span style="font-size: 9px; background: #ecfdf5; color: #047857; font-weight: 700; padding: 1px 5px; border-radius: 4px;">Pública / Livre</span>
           </div>
           <h4 style="margin: 4px 0; font-size: 14px; font-weight: 700;">${match.title}</h4>
@@ -547,7 +547,7 @@ class MarcaAiApp {
           </div>
           <button onclick="window.marcaApp.openMatchDetails('${match.id}')" style="
             width: 100%;
-            background: linear-gradient(135deg, #ae2012, #ee9b00);
+            background: linear-gradient(135deg, #dc2626, #e11d48);
             color: #fff;
             border: none;
             padding: 7px 12px;

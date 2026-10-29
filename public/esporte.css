@@ -1,10 +1,10 @@
-/* Importando as fontes */
+﻿/* Importando as fontes */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap");
 
 /* Variáveis de cores */
 :root {
-  --laranja: #ee9b00;
-  --vermelho: #ae2012;
+  --laranja: #e11d48;
+  --vermelho: #dc2626;
   --azul-claro: #007bff;
   --verde: #28a745;
   --cinza-claro: #f4f4f4;

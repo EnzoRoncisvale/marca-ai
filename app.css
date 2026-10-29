@@ -1,14 +1,14 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    MARCA AÍ! - Design System & Modern Sports Styling
    Foco em Partidas Comunitárias, Quadras Públicas e Descoberta de Jogos
    ========================================================================== */
 
 :root {
-  --primary: #ae2012;
-  --primary-hover: #8f1a0e;
+  --primary: #dc2626;
+  --primary-hover: #b91c1c;
   --primary-light: #fef2f2;
-  --accent: #ee9b00;
-  --accent-hover: #ca8200;
+  --accent: #e11d48;
+  --accent-hover: #be123c;
   --success: #10b981;
   --success-light: #ecfdf5;
   --info: #0284c7;
@@ -662,7 +662,7 @@ body {
 }
 
 .leaflet-control-layers-base input {
-  accent-color: #ee9b00 !important;
+  accent-color: #dc2626 !important;
 }
 
 .map-overlay-controls {
