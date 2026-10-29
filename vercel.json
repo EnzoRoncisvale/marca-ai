@@ -1,11 +1,15 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "source": "/api/partidas/(.*)",
+      "destination": "/api/partidas.py"
     },
     {
-      "source": "/api",
+      "source": "/api/partidas",
+      "destination": "/api/partidas.py"
+    },
+    {
+      "source": "/api/(.*)",
       "destination": "/api/index.py"
     }
   ]
