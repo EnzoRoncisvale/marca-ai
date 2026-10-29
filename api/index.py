@@ -46,7 +46,7 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def _get_clean_path(self):
-        raw_path = self.headers.get("x-matched-path") or self.headers.get("x-forwarded-uri") or self.path
+        raw_path = self.path or self.headers.get("x-forwarded-uri") or "/"
         parsed = urllib.parse.urlparse(raw_path)
         return parsed.path
 
@@ -82,6 +82,11 @@ class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self._get_clean_path()
 
+        # Primeiro: tenta servir arquivos estáticos públicos (/manifest.json, /service-worker.js, etc)
+        if not path.startswith("/api/partidas") and not path == "/api":
+            if self._try_serve_static(path):
+                return
+
         # Rota de listagem de partidas
         if path == "/api/partidas" or path == "/api" or path.endswith("/partidas"):
             try:
@@ -91,10 +96,9 @@ class handler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, status=500)
             return
 
-        # Se for qualquer outra rota e não começar com /api, tenta servir estático
-        if not path.startswith("/api"):
-            if self._try_serve_static(path):
-                return
+        # Fallback estático geral
+        if self._try_serve_static(path):
+            return
 
         self._send_json({"error": f"Endpoint GET {path} não encontrado"}, status=404)
 
