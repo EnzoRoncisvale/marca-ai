@@ -46,15 +46,25 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--gray-50);
   color: var(--dark-800);
   min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   line-height: 1.5;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* ==========================================================================
@@ -62,6 +72,7 @@ body {
    ========================================================================== */
 
 .navbar {
+  flex-shrink: 0;
   background: var(--white);
   border-bottom: 1px solid var(--gray-200);
   padding: 0.75rem 1.5rem;
@@ -259,6 +270,7 @@ body {
    ========================================================================== */
 
 .filter-bar {
+  flex-shrink: 0;
   background: var(--white);
   border-bottom: 1px solid var(--gray-200);
   padding: 0.6rem 1.5rem;
@@ -345,7 +357,9 @@ body {
 .app-container {
   display: flex;
   flex: 1;
-  height: calc(100vh - 110px);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   position: relative;
   overflow: hidden;
 }
@@ -539,7 +553,8 @@ body {
 .map-view-wrapper {
   flex: 1;
   height: 100%;
-  min-height: 500px;
+  width: 100%;
+  min-height: 0;
   position: relative;
   overflow: hidden;
 }
@@ -552,7 +567,6 @@ body {
   bottom: 0;
   width: 100% !important;
   height: 100% !important;
-  min-height: 500px;
   z-index: 1;
   background-color: #0f172a !important;
 }
@@ -653,7 +667,7 @@ body {
 
 .map-overlay-controls {
   position: absolute;
-  bottom: 4.5rem;
+  bottom: 1.5rem;
   right: 1rem;
   z-index: 500;
   display: flex;
@@ -1133,7 +1147,10 @@ body {
 /* Media Queries para Telas Mobile (max-width: 768px) */
 @media (max-width: 768px) {
   body {
-    padding-bottom: 64px; /* Espaço para a barra de navegação inferior */
+    padding-bottom: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
 
   /* Exibe a barra de navegação inferior */
@@ -1194,10 +1211,13 @@ body {
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Container do App no Celular */
+  /* Container do App no Celular - Preenche 100% até embaixo */
   .app-container {
-    height: calc(100vh - 106px - 62px);
-    height: calc(100dvh - 106px - 62px);
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    width: 100%;
+    padding-bottom: 0;
   }
 
   /* No modo mapa, oculta a sidebar desktop e deixa o mapa 100% full screen */
@@ -1234,12 +1254,12 @@ body {
 
   /* Controles flutuantes do mapa */
   .map-overlay-controls {
-    bottom: 5.5rem;
+    bottom: 4.8rem;
     right: 0.75rem;
   }
 
   .map-hint-banner {
-    bottom: 5.5rem;
+    bottom: 4.8rem;
     font-size: 0.75rem;
     padding: 0.45rem 0.9rem;
   }
