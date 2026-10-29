@@ -1,0 +1,2 @@
+# Marca Aí! - Vercel Serverless Dependencies
+# O projeto utiliza a biblioteca padrão do Python (http.server e sqlite3)

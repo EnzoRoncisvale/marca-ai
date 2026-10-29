@@ -1,0 +1,8 @@
+marca_ai.db
+*.db
+*.sqlite
+*.sqlite3
+__pycache__/
+*.pyc
+.git
+.github

@@ -1,20 +1,96 @@
 import sqlite3
 import os
 import json
+import tempfile
 
-DB_FILE = os.path.join(os.path.dirname(__file__), "marca_ai.db")
 SCHEMA_FILE = os.path.join(os.path.dirname(__file__), "schema.sql")
 
+SCHEMA_SQL = """
+CREATE TABLE IF NOT EXISTS partidas (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    sport TEXT NOT NULL,
+    category TEXT NOT NULL,
+    date TEXT NOT NULL,
+    time TEXT NOT NULL,
+    venue TEXT NOT NULL,
+    address TEXT,
+    court_type TEXT DEFAULT 'Quadra Pública',
+    has_lighting INTEGER DEFAULT 1,
+    lat REAL NOT NULL,
+    lng REAL NOT NULL,
+    level TEXT DEFAULT 'Casual / Resenha',
+    max_players INTEGER NOT NULL DEFAULT 14,
+    has_goalie_perk INTEGER DEFAULT 0,
+    organizer_id TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS participantes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    partida_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    user_name TEXT NOT NULL,
+    user_role TEXT NOT NULL,
+    is_organizer INTEGER DEFAULT 0,
+    is_waitlist INTEGER DEFAULT 0,
+    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (partida_id) REFERENCES partidas(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_participantes_partida ON participantes(partida_id);
+"""
+
+def get_db_path():
+    """
+    Determina o caminho do arquivo SQLite.
+    Se estiver rodando no ambiente Serverless da Vercel ou Lambda,
+    usa o diretório /tmp (único com permissão de escrita).
+    Localmente, salva no próprio diretório do projeto.
+    """
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        return os.path.join(tempfile.gettempdir(), "marca_ai.db")
+    
+    if "MARCA_AI_DB" in os.environ:
+        return os.environ["MARCA_AI_DB"]
+        
+    local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "marca_ai.db")
+    try:
+        test_file = local_path + ".test_perm"
+        with open(test_file, "w") as f:
+            f.write("1")
+        os.remove(test_file)
+        return local_path
+    except (OSError, IOError):
+        return os.path.join(tempfile.gettempdir(), "marca_ai.db")
+
 def get_connection():
-    conn = sqlite3.connect(DB_FILE)
+    db_path = get_db_path()
+    needs_init = not os.path.exists(db_path)
+    
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    
+    if needs_init:
+        try:
+            conn.executescript(SCHEMA_SQL)
+            conn.commit()
+        except Exception as e:
+            print("Erro ao inicializar schema SQLite:", e)
+            
     return conn
 
 def init_db():
     conn = get_connection()
-    with open(SCHEMA_FILE, "r", encoding="utf-8") as f:
-        conn.executescript(f.read())
+    try:
+        if os.path.exists(SCHEMA_FILE):
+            with open(SCHEMA_FILE, "r", encoding="utf-8") as f:
+                conn.executescript(f.read())
+        else:
+            conn.executescript(SCHEMA_SQL)
+    except Exception:
+        conn.executescript(SCHEMA_SQL)
     conn.commit()
     conn.close()
 
@@ -192,4 +268,4 @@ def delete_partida(partida_id):
 
 if __name__ == "__main__":
     init_db()
-    print("Banco de dados SQLite inicializado com sucesso em marca_ai.db.")
+    print("Banco de dados SQLite inicializado com sucesso em", get_db_path())

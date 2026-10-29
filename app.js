@@ -49,21 +49,42 @@ class MarcaAiApp {
   }
 
   async loadMatches() {
-    // Tenta carregar do backend SQLite
+    const saved = localStorage.getItem("marca_ai_sqlite_cache");
+    const localMatches = saved ? JSON.parse(saved) : [];
+
+    // Tenta carregar do backend SQLite (local ou Vercel Serverless)
     try {
       const response = await fetch("/api/partidas");
       if (response.ok) {
-        this.matches = await response.json();
-        this.saveLocalCache();
-        return;
+        const serverMatches = await response.json();
+        if (Array.isArray(serverMatches) && serverMatches.length > 0) {
+          this.matches = serverMatches;
+          this.saveLocalCache();
+          return;
+        } else if (localMatches.length > 0) {
+          // Se o container serverless iniciou limpo, re-sincroniza com as partidas locais salvas
+          for (const m of localMatches) {
+            try {
+              await fetch("/api/partidas", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: jsonPayload(m)
+              });
+            } catch (_) {}
+          }
+          this.matches = localMatches;
+          return;
+        } else {
+          this.matches = [];
+          this.saveLocalCache();
+          return;
+        }
       }
     } catch (e) {
-      // Caso esteja rodando sem servidor (file:///), usa cache local limpo
-      console.log("Servidor SQLite não detectado ou modo offline. Usando persistência local.");
+      console.log("Servidor SQLite não detectado ou modo offline. Usando persistência local:", e);
     }
 
-    const saved = localStorage.getItem("marca_ai_sqlite_cache");
-    this.matches = saved ? JSON.parse(saved) : [];
+    this.matches = localMatches;
   }
 
   saveLocalCache() {
