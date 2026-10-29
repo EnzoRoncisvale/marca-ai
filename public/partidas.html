@@ -73,10 +73,11 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
+      const API_BASE_URL = (typeof window !== "undefined" && ((window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === "file:" || (window.location.hostname === "localhost" && !window.location.port))) ? "https://marca-ai-kappa.vercel.app" : "";
       let matches = [];
 
       try {
-        const res = await fetch("/api/partidas");
+        const res = await fetch(API_BASE_URL + "/api/partidas");
         if (res.ok) {
           matches = await res.json();
         }

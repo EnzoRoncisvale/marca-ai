@@ -1,0 +1,26 @@
+{
+  "name": "marca-ai",
+  "version": "1.0.0",
+  "description": "Marca Aí! - Plataforma Comunitária de Rachas e Quadras Públicas",
+  "main": "index.html",
+  "scripts": {
+    "cap:sync": "cap sync",
+    "cap:build": "cap copy android",
+    "cap:open": "cap open android"
+  },
+  "keywords": [
+    "esporte",
+    "futebol",
+    "quadras",
+    "brasilia",
+    "mobile",
+    "capacitor"
+  ],
+  "author": "Marca Aí Team",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0"
+  }
+}

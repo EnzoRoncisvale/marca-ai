@@ -1,3 +1,6 @@
+// Base URL da API para suportar tanto Web quanto APK Android nativo (Capacitor)
+const API_BASE_URL = (typeof window !== "undefined" && ((window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === "file:" || (window.location.hostname === "localhost" && !window.location.port))) ? "https://marca-ai-kappa.vercel.app" : "";
+
 ﻿/**
  * MARCA AÍ! - Core Application Engine
  * Plataforma Comunitária de Marcação e Descoberta de Partidas em Quadras Públicas
@@ -294,7 +297,7 @@ class MarcaAiApp {
 
     // Tenta carregar do backend SQLite (local ou Vercel Serverless)
     try {
-      const response = await fetch("/api/partidas");
+      const response = await fetch(API_BASE_URL + "/api/partidas");
       if (response.ok) {
         const serverMatches = await response.json();
         if (Array.isArray(serverMatches) && serverMatches.length > 0) {
@@ -305,7 +308,7 @@ class MarcaAiApp {
           // Se o container serverless iniciou limpo, re-sincroniza com as partidas locais salvas
           for (const m of localMatches) {
             try {
-              await fetch("/api/partidas", {
+              await fetch(API_BASE_URL + "/api/partidas", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: jsonPayload(m)
@@ -1027,7 +1030,7 @@ class MarcaAiApp {
 
     // Tenta persistir na API SQLite
     try {
-      const response = await fetch("/api/partidas", {
+      const response = await fetch(API_BASE_URL + "/api/partidas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: jsonPayload(matchPayload)
@@ -1211,7 +1214,7 @@ class MarcaAiApp {
 
     // Sincroniza com a API SQLite
     try {
-      await fetch(`/api/partidas/${matchId}/checklist`, {
+      await fetch(`${API_BASE_URL}/api/partidas/${matchId}/checklist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: jsonPayload({
@@ -1337,7 +1340,7 @@ class MarcaAiApp {
     if (!match) return;
 
     try {
-      const response = await fetch(`/api/partidas/${matchId}/participar`, {
+      const response = await fetch(`${API_BASE_URL}/api/partidas/${matchId}/participar`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: jsonPayload({
@@ -1396,7 +1399,7 @@ class MarcaAiApp {
     if (!match) return;
 
     try {
-      const response = await fetch(`/api/partidas/${matchId}/sair`, {
+      const response = await fetch(`${API_BASE_URL}/api/partidas/${matchId}/sair`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: jsonPayload({ userId: this.currentUser.id })

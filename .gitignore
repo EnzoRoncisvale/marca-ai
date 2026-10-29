@@ -6,6 +6,19 @@ env/
 venv/
 ENV/
 
+# Node & Dependencies
+node_modules/
+npm-debug.log*
+
+# Capacitor & Android builds
+.gradle/
+build/
+android/app/build/
+android/.gradle/
+android/build/
+*.apk
+*.aab
+
 # SQLite & local database
 *.db
 *.sqlite
@@ -14,3 +27,4 @@ ENV/
 # OS generated
 .DS_Store
 Thumbs.db
+

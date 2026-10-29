@@ -1,0 +1,10 @@
+{
+  "appId": "com.marcaai.app",
+  "appName": "Marca Aí!",
+  "webDir": "public",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
+}
+
