@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#ffffff">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -127,14 +127,13 @@
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8360, -48.0280, 14)">Águas Claras</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8200, -48.0650, 14)">Taguatinga</button>
-        <button class="bsb-region-btn" id="btn-toggle-courts" style="background: rgba(16, 185, 129, 0.25); border: 1px solid #10b981; color: #a7f3d0; font-weight: 700;" onclick="window.marcaApp.togglePublicCourts()">
+        <button class="bsb-region-btn" id="btn-toggle-courts" style="background: #ecfdf5; border: 1px solid #10b981; color: #047857; font-weight: 700;" onclick="window.marcaApp.togglePublicCourts()">
           <i class="fa-solid fa-landmark-dome"></i> Quadras DF (15)
         </button>
-        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.25); margin: 0 4px;"></div>
+        <div style="width: 1px; height: 16px; background: #cbd5e1; margin: 0 4px;"></div>
         <button class="bsb-region-btn map-theme-btn active" data-theme="ruas" onclick="window.marcaApp.setMapTheme('ruas')">🗺️ Ruas</button>
         <button class="bsb-region-btn map-theme-btn" data-theme="satelite" onclick="window.marcaApp.setMapTheme('satelite')">🛰️ Satélite</button>
-        <button class="bsb-region-btn map-theme-btn" data-theme="noturno" onclick="window.marcaApp.setMapTheme('noturno')">🌙 Noturno</button>
-      </div>
+        </div>
 
       <div id="map" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; z-index: 1;"></div>
 
