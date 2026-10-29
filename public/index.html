@@ -41,6 +41,9 @@
     </div>
 
     <div class="nav-actions">
+      <button type="button" class="theme-toggle-btn nav-theme-btn" id="btn-theme-toggle-nav" onclick="window.marcaApp.toggleDarkMode()" title="Alternar Modo Escuro / Claro">
+        <i class="fa-solid fa-moon"></i>
+      </button>
       <button class="btn btn-primary" onclick="window.marcaApp.openCreateModal()">
         <i class="fa-solid fa-plus"></i>
         <span>Marcar Partida</span>
@@ -81,6 +84,10 @@
     </div>
 
     <div class="view-toggle">
+      <button type="button" class="theme-toggle-btn" id="btn-theme-toggle" onclick="window.marcaApp.toggleDarkMode()" title="Alternar Modo Escuro / Claro">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <div class="theme-toggle-divider"></div>
       <button class="view-btn active" data-view="map"><i class="fa-solid fa-map-location-dot"></i> Mapa</button>
       <button class="view-btn" data-view="list"><i class="fa-solid fa-grip"></i> Grade</button>
       <button class="view-btn" data-view="my-matches"><i class="fa-solid fa-user-check"></i> Minhas Partidas</button>
