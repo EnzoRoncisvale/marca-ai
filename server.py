@@ -7,7 +7,9 @@ import db
 
 PORT = 8000
 HOST = "127.0.0.1"
-DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+DIRECTORY = PUBLIC_DIR if os.path.isdir(PUBLIC_DIR) else BASE_DIR
 
 # Inicializa o banco de dados SQLite caso ainda não exista
 db.init_db()

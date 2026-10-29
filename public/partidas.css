@@ -1,0 +1,69 @@
+/* Importando as fontes */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap");
+
+/* Variáveis de cores */
+:root {
+  --azul-claro: #007bff;
+  --cinza-claro: #f4f4f4;
+  --cinza: #333;
+  --branco: #fff;
+}
+
+/* Estilos gerais */
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--cinza-claro);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Contêiner principal */
+.container {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+  background-color: var(--branco);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título da página */
+h2 {
+  text-align: center;
+  color: var(--cinza);
+  margin-bottom: 20px;
+}
+
+/* Lista de partidas */
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Estilos do botão "Voltar ao Mapa" */
+.voltar-btn {
+  display: block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--azul-claro);
+  color: var(--branco);
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+}
+
+.voltar-btn:hover {
+  background-color: #0056b3;
+}

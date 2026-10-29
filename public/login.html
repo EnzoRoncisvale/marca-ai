@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marca Aí! - Login</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="app.css">
+  <link rel="shortcut icon" href="assets/img/marca-ai-short.svg" type="image/svg+xml">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .auth-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .auth-logo {
+      height: 48px;
+      display: block;
+      margin: 0 auto;
+    }
+    .auth-header {
+      text-align: center;
+    }
+    .auth-header h1 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--dark-900);
+      font-weight: 800;
+    }
+    .auth-header p {
+      font-size: 0.875rem;
+      color: var(--dark-600);
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-card">
+    <a href="index.html">
+      <img src="assets/img/marca-ai-logo.svg" alt="Marca Aí! Logo" class="auth-logo" onerror="this.src='assets/img/Marca A! Logo.svg'">
+    </a>
+
+    <div class="auth-header">
+      <h1>Bem-vindo de volta!</h1>
+      <p>Acesse suas partidas e confirme sua presença no racha.</p>
+    </div>
+
+    <form id="login-form" style="display: flex; flex-direction: column; gap: 1rem;">
+      <div class="form-group">
+        <label class="form-label">E-mail ou Telefone</label>
+        <input type="email" class="form-input" id="login-email" value="lucas.silva@gmail.com" required placeholder="seu@email.com">
+      </div>
+
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label class="form-label">Senha</label>
+          <a href="#" onclick="alert('Instruções de recuperação de senha simuladas enviadas para seu e-mail!'); return false;" style="font-size: 0.75rem; color: var(--primary); text-decoration: none; font-weight: 600;">Esqueceu a senha?</a>
+        </div>
+        <input type="password" class="form-input" id="login-password" value="123456" required placeholder="Sua senha secreta">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="padding: 0.75rem; font-size: 0.95rem; margin-top: 0.5rem;">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        <span>Entrar na Minha Conta</span>
+      </button>
+    </form>
+
+    <div style="display: flex; align-items: center; gap: 1rem; color: var(--dark-600); font-size: 0.8rem;">
+      <div style="flex: 1; height: 1px; background: var(--gray-200);"></div>
+      <span>ou continue com</span>
+      <div style="flex: 1; height: 1px; background: var(--gray-200);"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+      <button class="btn btn-outline" onclick="simulateSocialLogin('Google')" style="font-size: 0.8rem;">
+        <i class="fa-brands fa-google" style="color: #ea4335;"></i> Google
+      </button>
+      <button class="btn btn-outline" onclick="simulateSocialLogin('Facebook')" style="font-size: 0.8rem;">
+        <i class="fa-brands fa-facebook" style="color: #1877f2;"></i> Facebook
+      </button>
+    </div>
+
+    <div style="text-align: center; font-size: 0.85rem; color: var(--dark-600);">
+      Ainda não tem conta? <a href="register.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Cadastre-se grátis</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("login-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const user = {
+        id: "usr-" + Date.now(),
+        name: "Lucas Silva (Você)",
+        email: email,
+        avatar: "LS",
+        position: "Meio-Campo",
+        karma: "4.9 ★",
+        gamesPlayed: 25,
+        phone: "(61) 98765-4321"
+      };
+      localStorage.setItem("marca_ai_user", JSON.stringify(user));
+      window.location.href = "index.html";
+    });
+
+    function simulateSocialLogin(provider) {
+      const user = {
+        id: "usr-social",
+        name: `Atleta ${provider}`,
+        avatar: provider[0],
+        position: "Atacante",
+        karma: "5.0 ★",
+        gamesPlayed: 12,
+        phone: "(61) 99999-8888"
+      };
+      localStorage.setItem("marca_ai_user", JSON.stringify(user));
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

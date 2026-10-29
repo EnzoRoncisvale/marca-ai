@@ -11,6 +11,21 @@ if ROOT_DIR not in sys.path:
 
 import db
 
+MIME_TYPES = {
+    ".html": "text/html; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".ico": "image/x-icon",
+    ".woff2": "font/woff2",
+    ".woff": "font/woff",
+    ".ttf": "font/ttf"
+}
+
 class handler(BaseHTTPRequestHandler):
     def _send_json(self, data, status=200):
         response_bytes = json.dumps(data, ensure_ascii=False).encode("utf-8")
@@ -31,22 +46,55 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def _get_clean_path(self):
-        # Na Vercel, o path pode vir no header x-matched-path, x-forwarded-uri ou em self.path
         raw_path = self.headers.get("x-matched-path") or self.headers.get("x-forwarded-uri") or self.path
         parsed = urllib.parse.urlparse(raw_path)
         return parsed.path
+
+    def _try_serve_static(self, path):
+        clean = path.strip("/")
+        if not clean or clean == "index.html":
+            target_rel = "index.html"
+        else:
+            target_rel = clean
+
+        candidates = [
+            os.path.join(ROOT_DIR, "public", target_rel),
+            os.path.join(ROOT_DIR, target_rel)
+        ]
+
+        for cand in candidates:
+            if os.path.isfile(cand):
+                ext = os.path.splitext(cand)[1].lower()
+                content_type = MIME_TYPES.get(ext, "application/octet-stream")
+                try:
+                    with open(cand, "rb") as f:
+                        data = f.read()
+                    self.send_response(200)
+                    self.send_header("Content-Type", content_type)
+                    self.send_header("Content-Length", str(len(data)))
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return True
+                except Exception:
+                    pass
+        return False
 
     def do_GET(self):
         path = self._get_clean_path()
 
         # Rota de listagem de partidas
-        if path == "/api/partidas" or path == "/api" or path.endswith("/partidas") or path == "/":
+        if path == "/api/partidas" or path == "/api" or path.endswith("/partidas"):
             try:
                 partidas = db.get_all_partidas()
                 self._send_json(partidas)
             except Exception as e:
                 self._send_json({"error": str(e)}, status=500)
             return
+
+        # Se for qualquer outra rota e não começar com /api, tenta servir estático
+        if not path.startswith("/api"):
+            if self._try_serve_static(path):
+                return
 
         self._send_json({"error": f"Endpoint GET {path} não encontrado"}, status=404)
 

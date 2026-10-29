@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Marca Aí! - Jogos e Quadras Públicas na sua Área</title>
+  
+  <!-- Fontes Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet CSS (Local e Fallback CDN) -->
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" onerror="this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'" />
+  
+  <!-- Estilos Customizados -->
+  <link rel="stylesheet" href="app.css">
+  <link rel="shortcut icon" href="assets/img/marca-ai-short.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <!-- =========================================================================
+       Navbar Principal
+       ========================================================================= -->
+  <header class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="assets/img/marca-ai-logo.svg" alt="Marca Aí! Logo" class="nav-logo" onerror="this.src='assets/img/Marca A! Logo.svg'">
+      <span class="brand-tagline">Quadras Públicas & Jogos</span>
+    </a>
+
+    <div class="nav-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="search-input" placeholder="Buscar esporte, quadra, praça, bairro...">
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn btn-primary" onclick="window.marcaApp.openCreateModal()">
+        <i class="fa-solid fa-plus"></i>
+        <span>Marcar Partida</span>
+      </button>
+
+      <a href="partidas.html" class="btn btn-outline" style="display: none;">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Partidas</span>
+      </a>
+
+      <!-- Badge de Usuário -->
+      <div class="user-badge" onclick="window.marcaApp.openProfileModal()">
+        <div class="user-avatar" id="header-user-avatar">LS</div>
+        <div class="user-info">
+          <span class="user-name" id="header-user-name">Lucas Silva</span>
+          <span class="user-karma" id="header-user-karma"><i class="fa-solid fa-star"></i> 4.9 ★</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       Barra de Filtros por Esporte e Alternador de Visão
+       ========================================================================= -->
+  <div class="filter-bar">
+    <div class="filter-pills">
+      <button class="pill active" data-sport="todos"><i class="fa-solid fa-border-all"></i> Todos os Esportes</button>
+      <button class="pill" data-sport="futebol"><i class="fa-solid fa-futbol"></i> Futebol Society</button>
+      <button class="pill" data-sport="futsal"><i class="fa-solid fa-futbol"></i> Futsal</button>
+      <button class="pill" data-sport="basquete"><i class="fa-solid fa-basketball"></i> Basquete</button>
+      <button class="pill" data-sport="volei"><i class="fa-solid fa-volleyball"></i> Vôlei</button>
+      <button class="pill" data-sport="beach-tennis"><i class="fa-solid fa-table-tennis-paddle-ball"></i> Beach Tennis</button>
+      <button class="pill" data-sport="tenis"><i class="fa-solid fa-baseball"></i> Tênis</button>
+    </div>
+
+    <div class="view-toggle">
+      <button class="view-btn active" data-view="map"><i class="fa-solid fa-map-location-dot"></i> Mapa</button>
+      <button class="view-btn" data-view="list"><i class="fa-solid fa-grip"></i> Grade</button>
+      <button class="view-btn" data-view="my-matches"><i class="fa-solid fa-user-check"></i> Minhas Partidas</button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Container Principal: Split View (Sidebar + Mapa Interativo)
+       ========================================================================= -->
+  <main class="app-container">
+    
+    <!-- Sidebar de Partidas -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <i class="fa-solid fa-calendar-days" style="color: var(--primary);"></i>
+          <span>Jogos Rolando na Região</span>
+        </div>
+        <span class="match-count" id="sidebar-match-count">Carregando...</span>
+      </div>
+
+      <!-- Espaço de Anúncio Patrocinado (Monetização do App) -->
+      <div style="padding: 0 1rem;">
+        <div class="ad-banner">
+          <span class="ad-badge">Anúncio</span>
+          <div class="ad-text">
+            <strong>Bolas & Artigos Esportivos:</strong> 15% OFF com o cupom <code>MARCAAI</code> na Decathlon / Lojas Locais.
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-content" id="sidebar-match-list">
+        <!-- Preenchido via app.js -->
+      </div>
+    </aside>
+
+    <!-- Mapa Interativo (Leaflet) -->
+    <section class="map-view-wrapper" id="map-view-wrapper" style="flex: 1; height: 100%; min-height: 500px; position: relative; overflow: hidden;">
+      <!-- Barra Flutuante de Atalhos de Brasília e Seletor de Tema -->
+      <div class="bsb-regions-bar">
+        <span class="bsb-regions-label"><i class="fa-solid fa-location-dot"></i> Brasília:</span>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7538, -47.8839, 14)">Asa Norte</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8200, -48.0650, 14)">Taguaparque</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8360, -48.0280, 14)">Águas Claras</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8285, -47.8790, 14)">Deck Sul</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8235, -47.9805, 14)">Guará</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8190, -48.1100, 14)">Ceilândia</button>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.25); margin: 0 4px;"></div>
+        <button class="bsb-region-btn map-theme-btn active" data-theme="noturno" onclick="window.marcaApp.setMapTheme('noturno')">🌙 Noturno</button>
+        <button class="bsb-region-btn map-theme-btn" data-theme="satelite" onclick="window.marcaApp.setMapTheme('satelite')">🛰️ Satélite</button>
+        <button class="bsb-region-btn map-theme-btn" data-theme="ruas" onclick="window.marcaApp.setMapTheme('ruas')">🗺️ Ruas</button>
+      </div>
+
+      <div id="map" class="dark-map" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; z-index: 1;"></div>
+
+      <!-- Controles Flutuantes do Mapa -->
+      <div class="map-overlay-controls">
+        <button class="map-control-btn" id="btn-my-location" title="Minha Localização">
+          <i class="fa-solid fa-crosshairs"></i>
+        </button>
+      </div>
+
+      <!-- Banner de Dica -->
+      <div class="map-hint-banner">
+        <i class="fa-solid fa-location-crosshairs" style="color: var(--accent);"></i>
+        <span>Toque na quadra para marcar um jogo!</span>
+      </div>
+
+      <!-- Card Flutuante de Prévia da Partida (Mobile App Bottom Sheet) -->
+      <div class="mobile-match-preview" id="mobile-match-preview" style="display: none;">
+        <div class="preview-drag-handle"></div>
+        <div id="mobile-preview-content"></div>
+      </div>
+    </section>
+
+    <!-- Visualização em Grade Completa (Modo Alternativo) -->
+    <section class="grid-view-container" id="grid-view-container">
+      <h2 style="font-family: var(--font-heading); font-size: 1.35rem; color: var(--dark-900); margin-bottom: 0.5rem;">
+        Partidas e Rachões Abertos na Sua Cidade
+      </h2>
+      <p style="color: var(--dark-600); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        Encontre um racha rolando perto de você em parques e praças, confirme sua presença e vá jogar sem custo.
+      </p>
+      <div class="grid-cards" id="grid-match-list">
+        <!-- Preenchido dinamicamente -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL 1: Criar / Marcar Nova Partida Pública
+       ========================================================================= -->
+  <div class="modal-backdrop" id="create-match-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-circle-plus" style="color: var(--primary);"></i>
+          <span>Marcar Partida / Jogo Aberto</span>
+        </div>
+        <button class="modal-close" onclick="window.marcaApp.closeCreateModal()">&times;</button>
+      </div>
+
+      <form id="create-match-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Nome da Partida / Racha *</label>
+            <input type="text" class="form-input" id="form-title" placeholder="Ex: Pelada no Parque da Sexta" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Modalidade Esportiva *</label>
+              <select class="form-select" id="form-sport" required>
+                <option value="Futebol Society" data-category="futebol">Futebol Society (7x7)</option>
+                <option value="Futsal" data-category="futsal">Futsal (5x5)</option>
+                <option value="Futebol de Campo" data-category="futebol">Futebol de Campo (11x11)</option>
+                <option value="Basquete" data-category="basquete">Basquete (Street / 3x3 / 5x5)</option>
+                <option value="Vôlei" data-category="volei">Vôlei de Quadra / Areia</option>
+                <option value="Beach Tennis" data-category="beach-tennis">Beach Tennis</option>
+                <option value="Tênis" data-category="tenis">Tênis</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nível de Competição *</label>
+              <select class="form-select" id="form-level" required>
+                <option value="Casual / Resenha">Casual / Resenha (Diversão)</option>
+                <option value="Intermediário" selected>Intermediário</option>
+                <option value="Competitivo">Competitivo (Pegado)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Data *</label>
+              <input type="text" class="form-input" id="form-date" placeholder="Hoje, Amanhã, ou DD/MM" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Horário *</label>
+              <input type="time" class="form-input" id="form-time" required value="19:30">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nome da Quadra / Praça / Parque *</label>
+            <input type="text" class="form-input" id="form-venue" placeholder="Ex: Quadra Poliesportiva da Praça Central" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Tipo de Local Público</label>
+              <select class="form-select" id="form-court-type">
+                <option value="Quadra Pública">Quadra Pública</option>
+                <option value="Parque Municipal">Parque Municipal</option>
+                <option value="Praça de Bairro">Praça de Bairro</option>
+                <option value="Quadra de Areia Aberta">Quadra de Areia Aberta</option>
+                <option value="Ginásio Comunitário">Ginásio Comunitário</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Vagas / Limite de Jogadores *</label>
+              <input type="number" class="form-input" id="form-max-players" value="14" min="2" max="30" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Endereço ou Ponto de Referência</label>
+            <input type="text" class="form-input" id="form-address" placeholder="Ex: Ao lado do quiosque / estacionamento">
+          </div>
+
+          <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.25rem;">
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" id="form-lighting" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+              <label for="form-lighting" class="form-label" style="margin: 0; cursor: pointer;">
+                💡 Quadra possui iluminação noturna
+              </label>
+            </div>
+
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" id="form-goalie-perk" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+              <label for="form-goalie-perk" class="form-label" style="margin: 0; cursor: pointer;">
+                🧤 Vaga prioritária para Goleiro
+              </label>
+            </div>
+          </div>
+
+          <!-- Campos Ocultos de Coordenadas -->
+          <input type="hidden" id="form-lat">
+          <input type="hidden" id="form-lng">
+          <p style="font-size: 0.75rem; color: var(--dark-600); margin-top: 0.5rem;">
+            <i class="fa-solid fa-map-pin"></i> Ponto no Mapa: <span id="form-coords-display" style="font-weight: 700;">-15.7985, -47.9045</span>
+          </p>
+        </div>
+
+        <div class="modal-footer" style="padding: 1.2rem 1.5rem; background: #f8fafc; border-top: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+          <button type="button" class="btn btn-outline" onclick="window.marcaApp.closeCreateModal()">
+            <i class="fa-solid fa-xmark"></i> Cancelar
+          </button>
+          <button type="submit" id="btn-submit-partida" class="btn btn-primary" style="background: #10b981; border: none; font-size: 1rem; font-weight: 800; padding: 0.75rem 1.5rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); cursor: pointer;">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Confirmar e Salvar Partida no SQLite</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: Detalhes da Partida & Gestão de Presença / Vagas
+       ========================================================================= -->
+  <div class="modal-backdrop" id="match-details-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i>
+          <span id="modal-detail-title">Detalhes da Partida</span>
+        </div>
+        <button class="modal-close" onclick="window.marcaApp.closeMatchDetails()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Banner Hero com Resumo -->
+        <div class="match-hero-banner">
+          <div class="match-hero-top">
+            <span class="sport-tag tag-futebol" id="modal-detail-sport">Futebol Society</span>
+            <span style="font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 99px;" id="modal-player-count">0 / 0 confirmados</span>
+          </div>
+          <div class="match-meta-pills">
+            <div class="meta-pill" id="modal-detail-datetime"><i class="fa-regular fa-calendar"></i> Carregando...</div>
+            <div class="meta-pill" id="modal-detail-venue"><i class="fa-solid fa-location-dot"></i> Carregando...</div>
+            <div class="meta-pill" id="modal-detail-level"><i class="fa-solid fa-chart-simple"></i> Casual</div>
+            <div class="meta-pill" id="modal-detail-court" style="background: rgba(16, 185, 129, 0.3); color: #ecfdf5;"><i class="fa-solid fa-tree"></i> Quadra Pública / Acesso Livre</div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação Rápida: WhatsApp e Sorteador -->
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn btn-whatsapp" onclick="window.marcaApp.shareMatchOnWhatsApp()" style="flex: 1;">
+            <i class="fa-brands fa-whatsapp"></i> Chamar no Zap (Radar Falta 1)
+          </button>
+          <button class="btn btn-outline" onclick="window.marcaApp.openSorteioModal()" style="flex: 1;">
+            <i class="fa-solid fa-shuffle"></i> Sortear Times (Panela Zero)
+          </button>
+        </div>
+
+        <!-- Anúncio Discreto na Partida (Monetização) -->
+        <div class="ad-banner" style="margin: 0;">
+          <span class="ad-badge">Apoio</span>
+          <div class="ad-text">
+            <strong>Bebidas e Hidratação:</strong> Hidrate-se durante o jogo! Conheça as isotônicas parceiras do Marca Aí!.
+          </div>
+        </div>
+
+        <!-- Seção de Jogadores Confirmados -->
+        <div>
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--dark-900); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-users" style="color: var(--primary);"></i> Atletas Confirmados para o Jogo</span>
+            <span style="font-size: 0.75rem; color: var(--dark-600); font-weight: 500;">Ordem de confirmação</span>
+          </h4>
+          
+          <div class="player-list" id="modal-player-list">
+            <!-- Preenchido via app.js -->
+          </div>
+
+          <!-- Lista de Espera -->
+          <div id="modal-waitlist"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer" id="modal-action-buttons">
+        <!-- Preenchido dinamicamente com botão Quero Jogar / Desistir -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: Sorteador Inteligente de Times
+       ========================================================================= -->
+  <div class="modal-backdrop" id="sorteio-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-shuffle" style="color: var(--primary);"></i>
+          <span>Sorteador de Times (Sem Panela!)</span>
+        </div>
+        <button class="modal-close" onclick="window.marcaApp.closeSorteioModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--dark-600);">
+          Os jogadores confirmados foram balanceados por posição para garantir uma partida justa e equilibrada.
+        </p>
+
+        <div class="teams-container">
+          <div class="team-box team-1">
+            <div class="team-header">
+              <span><i class="fa-solid fa-shirt"></i> TIME 1 (COLETE BRANCO)</span>
+            </div>
+            <div id="team-1-players"></div>
+          </div>
+
+          <div class="team-box team-2">
+            <div class="team-header">
+              <span><i class="fa-solid fa-shirt"></i> TIME 2 (COLETE COLORIDO)</span>
+            </div>
+            <div id="team-2-players"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button class="btn btn-outline" onclick="window.marcaApp.sortearTimes(window.marcaApp.matches.find(m => m.id === window.marcaApp.selectedMatchId))">
+          <i class="fa-solid fa-arrows-rotate"></i> Sortear Novamente
+        </button>
+        <button class="btn btn-whatsapp" onclick="window.marcaApp.copyTeamsToWhatsApp()">
+          <i class="fa-brands fa-whatsapp"></i> Copiar Escalação para o Zap
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 4: Perfil do Atleta (Padrão App Mobile)
+       ========================================================================= -->
+  <div class="modal-backdrop" id="user-profile-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-id-card" style="color: var(--primary);"></i>
+          <span>Meu Perfil de Atleta</span>
+        </div>
+        <button class="modal-close" onclick="window.marcaApp.closeProfileModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--gray-100); border-radius: var(--radius-md);">
+          <div class="user-avatar" style="width: 52px; height: 52px; font-size: 1.25rem;" id="profile-avatar">LS</div>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--dark-900); margin: 0;" id="profile-name">Lucas Silva</h3>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.35rem; align-items: center; flex-wrap: wrap;">
+              <span class="user-karma" id="profile-karma" style="font-size: 0.8rem;"><i class="fa-solid fa-star"></i> 4.9 ★ Fair Play</span>
+              <span style="font-size: 0.7rem; background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 99px; font-weight: 700;" id="profile-role">Meio-Campo</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="profile-edit-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
+          <div class="form-group">
+            <label class="form-label">Seu Nome / Apelido na Pelada *</label>
+            <input type="text" class="form-input" id="profile-input-name" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Posição Principal</label>
+              <select class="form-select" id="profile-input-role">
+                <option value="Meio-Campo">Meio-Campo</option>
+                <option value="Goleiro">Goleiro (Muralha)</option>
+                <option value="Atacante">Atacante / Pivô</option>
+                <option value="Zagueiro">Zagueiro / Fixo</option>
+                <option value="Lateral">Lateral / Ala</option>
+                <option value="Levantador">Levantador (Vôlei)</option>
+                <option value="Jogador Geral">Jogador Geral</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">WhatsApp (para confirmações)</label>
+              <input type="text" class="form-input" id="profile-input-phone" placeholder="(61) 98765-4321">
+            </div>
+          </div>
+
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.85rem; border-radius: var(--radius-md); font-size: 0.8rem; color: #166534;">
+            <i class="fa-solid fa-shield-halved"></i> <strong>Selo Fair Play Ativo:</strong> Comparecer nas peladas marcadas sem dar bolo mantém sua nota alta na comunidade.
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem; padding: 0.75rem; font-weight: 700;">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+          </button>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="window.marcaApp.closeProfileModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Barra de Navegação Inferior (Mobile App Tab Bar)
+       ========================================================================= -->
+  <nav class="mobile-bottom-nav">
+    <button class="nav-item active" data-tab="map" onclick="window.marcaApp.switchView('map')">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>Mapa</span>
+    </button>
+    <button class="nav-item" data-tab="list" onclick="window.marcaApp.switchView('list')">
+      <i class="fa-solid fa-list-ul"></i>
+      <span>Jogos</span>
+    </button>
+    <button class="nav-item nav-item-action" onclick="window.marcaApp.openCreateModal()" title="Marcar Jogo">
+      <div class="action-btn-circle">
+        <i class="fa-solid fa-plus"></i>
+      </div>
+      <span>Marcar</span>
+    </button>
+    <button class="nav-item" data-tab="my-matches" onclick="window.marcaApp.switchView('my-matches')">
+      <i class="fa-solid fa-trophy"></i>
+      <span>Meus Jogos</span>
+    </button>
+    <button class="nav-item" data-tab="profile" onclick="window.marcaApp.openProfileModal()">
+      <i class="fa-solid fa-user"></i>
+      <span>Perfil</span>
+    </button>
+  </nav>
+
+  <!-- Scripts: Leaflet Local e Aplicação -->
+  <script src="assets/vendor/leaflet/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

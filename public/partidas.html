@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marca Aí! - Todos os Jogos e Quadras Públicas</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="app.css">
+  <link rel="shortcut icon" href="assets/img/marca-ai-short.svg" type="image/svg+xml">
+</head>
+<body style="background: var(--gray-50);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="assets/img/marca-ai-logo.svg" alt="Marca Aí! Logo" class="nav-logo" onerror="this.src='assets/img/Marca A! Logo.svg'">
+      <span class="brand-tagline">Quadras Públicas & Jogos</span>
+    </a>
+
+    <div class="nav-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="partidas-search" placeholder="Filtrar por esporte, quadra, praça...">
+    </div>
+
+    <div class="nav-actions">
+      <a href="index.html" class="btn btn-primary">
+        <i class="fa-solid fa-map-location-dot"></i>
+        <span>Ver no Mapa</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Container de Conteúdo -->
+  <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; width: 100%;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+      <div>
+        <h1 style="font-family: var(--font-heading); font-size: 1.75rem; color: var(--dark-900); font-weight: 800;">
+          Jogos e Rachões Acontecendo na Área
+        </h1>
+        <p style="color: var(--dark-600); font-size: 0.95rem; margin-top: 0.25rem;">
+          Partidas abertas em quadras públicas, parques e praças comunitárias salvas no banco de dados SQLite.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="sport-filter-buttons">
+        <button class="pill active" data-cat="all">Todos</button>
+        <button class="pill" data-cat="futebol">Futebol</button>
+        <button class="pill" data-cat="futsal">Futsal</button>
+        <button class="pill" data-cat="basquete">Basquete</button>
+        <button class="pill" data-cat="volei">Vôlei</button>
+        <button class="pill" data-cat="beach-tennis">Beach Tennis</button>
+      </div>
+    </div>
+
+    <!-- Anúncio Patrocinado em Partidas -->
+    <div class="ad-banner" style="margin-bottom: 1.5rem;">
+      <span class="ad-badge">Patrocínio</span>
+      <div class="ad-text">
+        <strong>Torneio Comunitário das Praças:</strong> Apoie o esporte local e participe dos rachões abertos na sua cidade.
+      </div>
+    </div>
+
+    <!-- Grade de Partidas -->
+    <div class="grid-cards" id="partidas-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+      <!-- Carregado via SQLite / API -->
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      let matches = [];
+
+      try {
+        const res = await fetch("/api/partidas");
+        if (res.ok) {
+          matches = await res.json();
+        }
+      } catch (e) {
+        const saved = localStorage.getItem("marca_ai_sqlite_cache");
+        matches = saved ? JSON.parse(saved) : [];
+      }
+
+      let activeCategory = "all";
+      let searchQuery = "";
+
+      const renderMatches = () => {
+        const container = document.getElementById("partidas-list");
+        if (!container) return;
+
+        const filtered = matches.filter(m => {
+          const matchCat = activeCategory === "all" || m.category === activeCategory || (activeCategory === "futebol" && m.category === "futsal");
+          const query = searchQuery.toLowerCase();
+          const matchSearch = !query || 
+            (m.title && m.title.toLowerCase().includes(query)) || 
+            (m.venue && m.venue.toLowerCase().includes(query)) || 
+            (m.sport && m.sport.toLowerCase().includes(query));
+          return matchCat && matchSearch;
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: #64748b;">
+              <i class="fa-solid fa-trophy" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
+              <h3 style="color: #1e293b; font-weight: 700;">Nenhuma partida agendada ainda</h3>
+              <p>O banco SQLite está limpo. Volte ao mapa para marcar o primeiro jogo na quadra do seu bairro!</p>
+              <a href="index.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-flex;">Ir para o Mapa</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = filtered.map(m => {
+          const playersCount = m.players ? m.players.length : 0;
+          const vagasRestantes = m.maxPlayers - playersCount;
+          const isUrgente = vagasRestantes <= 2 && vagasRestantes > 0;
+          return `
+            <div class="match-card" style="padding: 1.25rem; border-radius: 12px; box-shadow: var(--shadow-sm);">
+              <div class="card-top">
+                <h3 class="card-title" style="font-size: 1.05rem;">${m.title}</h3>
+                <span class="sport-tag tag-${m.category || 'futebol'}">${m.sport}</span>
+              </div>
+              <div class="card-details" style="margin: 0.75rem 0;">
+                <div class="card-detail-item">
+                  <i class="fa-regular fa-calendar"></i>
+                  <span>${m.date} às <strong>${m.time}</strong></span>
+                </div>
+                <div class="card-detail-item">
+                  <i class="fa-solid fa-chart-simple"></i>
+                  <span>${m.level}</span>
+                </div>
+                <div class="card-detail-item" style="grid-column: span 2;">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span>${m.venue}</span>
+                </div>
+              </div>
+              <div class="card-footer" style="padding-top: 0.75rem;">
+                <div class="vagas-badge ${isUrgente ? 'urgente' : (vagasRestantes === 0 ? 'lotado' : 'abertas')}">
+                  <i class="fa-solid fa-users"></i>
+                  <span>${vagasRestantes > 0 ? `${vagasRestantes} vagas abertas` : 'Lotado'}</span>
+                </div>
+                <span class="public-court-badge"><i class="fa-solid fa-tree"></i> Pública / Livre</span>
+              </div>
+              <div style="margin-top: 0.85rem; display: flex; gap: 0.5rem;">
+                <a href="index.html" class="btn btn-primary" style="flex: 1; font-size: 0.8rem; padding: 0.45rem;">
+                  <i class="fa-solid fa-map-location-dot"></i> Ver no Mapa
+                </a>
+              </div>
+            </div>
+          `;
+        }).join("");
+      };
+
+      document.querySelectorAll("#sport-filter-buttons button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#sport-filter-buttons button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeCategory = btn.dataset.cat;
+          renderMatches();
+        });
+      });
+
+      const searchInput = document.getElementById("partidas-search");
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          searchQuery = e.target.value;
+          renderMatches();
+        });
+      }
+
+      renderMatches();
+    });
+  </script>
+</body>
+</html>
