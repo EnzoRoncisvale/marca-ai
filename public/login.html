@@ -101,7 +101,7 @@
 
     .auth-tab.active {
       background: #ffffff;
-      color: #f1f5f9;
+      color: #090d16;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
@@ -127,28 +127,46 @@
     .input-icon {
       position: absolute;
       left: 1rem;
-      color: #94a3b8;
+      color: #64748b;
       font-size: 0.9rem;
       pointer-events: none;
+      transition: color 0.2s ease;
+    }
+
+    .input-wrapper:focus-within .input-icon {
+      color: #dc2626;
     }
 
     .form-input-custom {
       width: 100%;
-      background: #090d16;
-      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
       border-radius: 10px;
       padding: 0.75rem 1rem 0.75rem 2.6rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-family: inherit;
-      color: #f1f5f9;
+      color: #000000 !important;
       transition: all 0.2s ease;
+    }
+
+    .form-input-custom::placeholder {
+      color: #94a3b8;
     }
 
     .form-input-custom:focus {
       outline: none;
       background: #ffffff;
+      color: #000000 !important;
       border-color: #dc2626;
       box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
+    }
+
+    .form-input-custom:-webkit-autofill,
+    .form-input-custom:-webkit-autofill:hover, 
+    .form-input-custom:-webkit-autofill:focus {
+      -webkit-text-fill-color: #000000 !important;
+      -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+      transition: background-color 5000s ease-in-out 0s;
     }
 
     .password-toggle-btn {
@@ -156,14 +174,15 @@
       right: 0.85rem;
       background: transparent;
       border: none;
-      color: #94a3b8;
+      color: #64748b;
       cursor: pointer;
       font-size: 0.9rem;
       padding: 4px;
+      transition: color 0.2s ease;
     }
 
     .password-toggle-btn:hover {
-      color: #334155;
+      color: #000000;
     }
 
     .btn-auth-submit {
