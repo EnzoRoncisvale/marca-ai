@@ -335,7 +335,6 @@ class MarcaAiApp {
   // 3. Inicialização Geral
   // ===========================================================================
   async init() {
-    this.initTheme();
     this.updateUserUI();
     this.initMap();
     await this.loadMatches();
@@ -382,26 +381,13 @@ class MarcaAiApp {
       attribution: 'Imagens Satélite HD &copy; Esri'
     });
 
-    // Camada Noturna CartoDB Dark Matter nativa (sem filtros CSS)
-    const noturnoLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      maxZoom: 19,
-      subdomains: "abcd",
-      attribution: '&copy; CARTO &copy; OpenStreetMap'
-    });
-
     this.layers = {
       ruas: ruasLayer,
-      satelite: sateliteLayer,
-      noturno: noturnoLayer
+      satelite: sateliteLayer
     };
 
-    // Adiciona Mapa conforme tema inicial salvo
-    const savedTheme = localStorage.getItem("marca_ai_theme");
-    if (savedTheme === "dark") {
-      noturnoLayer.addTo(this.map);
-    } else {
-      noturnoLayer.addTo(this.map);
-    }
+    // Adiciona Mapa de Ruas (OpenStreetMap) como camada ativa e confiável
+    ruasLayer.addTo(this.map);
 
     // Seletor de Camadas nativo do Leaflet (apenas Ruas e Satelite)
     const baseLayers = {
@@ -444,66 +430,6 @@ class MarcaAiApp {
     this.map.invalidateSize();
   }
 
-
-  // ===========================================================================
-  // Gerenciador de Tema (Modo Claro / Escuro)
-  // ===========================================================================
-  initTheme() {
-    const saved = localStorage.getItem("marca_ai_theme");
-    if (saved === "dark") {
-      this.setDarkMode(true, false);
-    } else {
-      this.setDarkMode(false, false);
-    }
-  }
-
-  toggleDarkMode() {
-    const isDark = document.body.classList.contains("dark-mode");
-    this.setDarkMode(!isDark, true);
-  }
-
-  setDarkMode(enable, showToast = true) {
-    const icons = document.querySelectorAll("#btn-theme-toggle i, #btn-theme-toggle-nav i, .theme-toggle-btn i");
-    const metaTheme = document.querySelector('meta[name="theme-color"]');
-
-    if (enable) {
-      document.body.classList.add("dark-mode");
-      localStorage.setItem("marca_ai_theme", "dark");
-      icons.forEach(i => {
-        i.className = "fa-solid fa-sun";
-        i.style.color = "#fbbf24";
-      });
-      if (metaTheme) metaTheme.setAttribute("content", "#0f172a");
-
-      if (this.map && this.layers && this.layers.noturno) {
-        if (this.map.hasLayer(this.layers.ruas)) {
-          this.map.removeLayer(this.layers.ruas);
-          this.layers.noturno.addTo(this.map);
-        }
-      }
-      if (showToast) this.showToast("🌙 Modo Escuro ativado");
-    } else {
-      document.body.classList.remove("dark-mode");
-      localStorage.setItem("marca_ai_theme", "light");
-      icons.forEach(i => {
-        i.className = "fa-solid fa-moon";
-        i.style.color = "";
-      });
-      if (metaTheme) metaTheme.setAttribute("content", "#ffffff");
-
-      if (this.map && this.layers && this.layers.ruas) {
-        if (this.map.hasLayer(this.layers.noturno)) {
-          this.map.removeLayer(this.layers.noturno);
-          this.layers.ruas.addTo(this.map);
-        }
-      }
-      if (showToast) this.showToast("☀️ Modo Claro ativado");
-    }
-
-    if (this.map) {
-      setTimeout(() => this.map.invalidateSize(), 150);
-    }
-  }
 
   goToRegion(lat, lng, zoom = 14) {
     if (this.map) {
