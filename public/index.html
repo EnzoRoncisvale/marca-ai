@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -129,10 +129,11 @@
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7538, -47.8839, 14)">Asa Norte</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8150, -47.9150, 14)">Asa Sul</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7985, -47.9045, 14)">Parque da Cidade</button>
+        <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.7960, -47.9280, 15)">Sudoeste</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8360, -48.0280, 14)">Águas Claras</button>
         <button class="bsb-region-btn" onclick="window.marcaApp.goToRegion(-15.8200, -48.0650, 14)">Taguatinga</button>
-        <button class="bsb-region-btn" id="btn-toggle-courts" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #a7f3d0; font-weight: 700;" onclick="window.marcaApp.togglePublicCourts()">
-          <i class="fa-solid fa-landmark-dome"></i> Quadras DF (15)
+        <button class="bsb-region-btn" id="btn-toggle-courts" style="background: rgba(220, 38, 38, 0.2); border: 1px solid #dc2626; color: #fca5a5; font-weight: 700;" onclick="window.marcaApp.togglePublicCourts()">
+          <svg viewBox="0 0 24 16" width="14" height="10" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect x="1" y="1" width="22" height="14" rx="1.5"/><line x1="12" y1="1" x2="12" y2="15"/><circle cx="12" cy="8" r="3"/></svg> Quadras DF (22)
         </button>
         <div style="width: 1px; height: 16px; background: #334155; margin: 0 4px;"></div>
         <button class="bsb-region-btn map-theme-btn active" data-theme="ruas" onclick="window.marcaApp.setMapTheme('ruas')">🗺️ Ruas</button>
@@ -194,7 +195,7 @@
           <!-- Ponto Pré-Estabelecido / Levantamento de Quadras Públicas de Brasília -->
           <div class="form-group" style="background: #f8fafc; border: 1.5px dashed #cbd5e1; padding: 0.85rem; border-radius: 10px;">
             <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-              <span><i class="fa-solid fa-landmark-dome" style="color: #10b981;"></i> Ponto Pré-Estabelecido (Quadra Pública Verificada)</span>
+              <span><svg viewBox="0 0 24 16" width="14" height="10" fill="none" stroke="#dc2626" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect x="1" y="1" width="22" height="14" rx="1.5"/><line x1="12" y1="1" x2="12" y2="15"/><circle cx="12" cy="8" r="3"/></svg> Ponto Pré-Estabelecido (Quadra Pública Verificada)</span>
               <span style="font-size: 0.68rem; background: #dcfce7; color: #15803d; font-weight: 800; padding: 2px 6px; border-radius: 4px;">Preenchimento Rápido</span>
             </label>
             <select class="form-select" id="form-preset-court" onchange="window.marcaApp.onSelectPresetCourt(this.value)" style="border-color: #94a3b8; font-weight: 600;">
@@ -219,6 +220,17 @@
                 <option value="bsb-sul-214">SQS 214/215 Sul - Quadra da Entrequadra</option>
                 <option value="bsb-sul-parque">Parque Ecológico Asa Sul (SGAS 614) - Poliesportiva</option>
                 <option value="bsb-sul-cief">CIEF (SGAS 907 Sul) - Complexo Esportivo Público</option>
+              </optgroup>
+              <optgroup label="⚽ SETOR SUDOESTE">
+                <option value="bsb-sudoeste-bosque">Parque Bosque do Sudoeste - Poliesportiva & Areia</option>
+                <option value="bsb-sudoeste-304">SQSW 304/305 Sudoeste - Quadra Poliesportiva</option>
+                <option value="bsb-sudoeste-300">SQSW 300 Sudoeste (Praça Central) - Streetball & Futsal</option>
+                <option value="bsb-sudoeste-qrsw">QRSW 04 Sudoeste Econômico - Complexo Comunitário</option>
+              </optgroup>
+              <optgroup label="🌳 ÁGUAS CLARAS">
+                <option value="bsb-aguas-parque">Parque Ecológico de Águas Claras - Poliesportiva</option>
+                <option value="bsb-aguas-areia">Parque de Águas Claras - Quadras de Areia & Vôlei</option>
+                <option value="bsb-aguas-gaivotas">Praça das Gaivotas (Av. Parque) - Poliesportiva</option>
               </optgroup>
             </select>
             <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.35rem;">

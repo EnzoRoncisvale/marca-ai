@@ -244,6 +244,7 @@ const PRESET_PUBLIC_COURTS = [
     lat: -15.8360,
     lng: -47.9290
   },
+
   {
     id: "bsb-sul-cief",
     name: "CIEF - Centro Interescolar (SGAS 907)",
@@ -258,6 +259,115 @@ const PRESET_PUBLIC_COURTS = [
     hasLighting: true,
     lat: -15.8175,
     lng: -47.9180
+  },
+
+  // --- SETOR SUDOESTE ---
+  {
+    id: "bsb-sudoeste-bosque",
+    name: "Parque Urbano Bosque do Sudoeste",
+    region: "Sudoeste",
+    sports: ["Futsal", "Vôlei de Areia", "Basquete", "Futevôlei"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Piso Asfáltico Pintado e Areia",
+    venue: "Parque Bosque do Sudoeste",
+    address: "2ª Avenida, Entre as Quadras 100/300 - Sudoeste, Brasília - DF",
+    courtType: "Parque Urbano / Público",
+    hasLighting: true,
+    lat: -15.7964,
+    lng: -47.9264
+  },
+  {
+    id: "bsb-sudoeste-304",
+    name: "Quadra Poliesportiva SQSW 304/305",
+    region: "Sudoeste",
+    sports: ["Futsal", "Basquete", "Vôlei"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Concreto com Alambrado",
+    venue: "Praça de Esportes SQSW 304/305",
+    address: "SQSW 304/305, Entrequadra - Sudoeste, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7925,
+    lng: -47.9288
+  },
+  {
+    id: "bsb-sudoeste-300",
+    name: "Quadra Poliesportiva da SQSW 300",
+    region: "Sudoeste",
+    sports: ["Basquete Streetball", "Futsal"],
+    defaultSport: "Basquete",
+    category: "basquete",
+    surface: "Piso Asfáltico Especial",
+    venue: "Praça Central da SQSW 300",
+    address: "SQSW 300, Área Especial - Sudoeste, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7990,
+    lng: -47.9220
+  },
+  {
+    id: "bsb-sudoeste-qrsw",
+    name: "Complexo Esportivo da QRSW 04/05",
+    region: "Sudoeste",
+    sports: ["Futebol Society", "Futsal", "Futevôlei"],
+    defaultSport: "Futebol Society",
+    category: "futebol",
+    surface: "Concreto Polido e Caixa de Areia",
+    venue: "Área de Esportes Comunitária QRSW 04",
+    address: "QRSW 04, Área Especial - Sudoeste, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7938,
+    lng: -47.9345
+  },
+
+  // --- ÁGUAS CLARAS ---
+  {
+    id: "bsb-aguas-parque",
+    name: "Parque Ecológico de Águas Claras (Poliesportiva)",
+    region: "Águas Claras",
+    sports: ["Futsal", "Basquete", "Handebol"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Piso de Concreto Pintado",
+    venue: "Parque Ecológico de Águas Claras",
+    address: "Avenida das Castanheiras, s/n - Águas Claras, Brasília - DF",
+    courtType: "Parque Urbano / Público",
+    hasLighting: true,
+    lat: -15.8328,
+    lng: -48.0303
+  },
+  {
+    id: "bsb-aguas-areia",
+    name: "Parque de Águas Claras (Quadras de Areia)",
+    region: "Águas Claras",
+    sports: ["Vôlei de Praia", "Futevôlei", "Beach Tennis"],
+    defaultSport: "Vôlei",
+    category: "volei",
+    surface: "Areia de Praia Fina",
+    venue: "Complexo de Areia - Parque de Águas Claras",
+    address: "Próximo à Lagoa dos Patos - Águas Claras, Brasília - DF",
+    courtType: "Parque Urbano / Público",
+    hasLighting: true,
+    lat: -15.8340,
+    lng: -48.0295
+  },
+  {
+    id: "bsb-aguas-gaivotas",
+    name: "Quadra Poliesportiva Praça das Gaivotas",
+    region: "Águas Claras",
+    sports: ["Futsal", "Basquete", "Vôlei"],
+    defaultSport: "Futebol Society",
+    category: "futebol",
+    surface: "Piso Cimentado com Alambrado",
+    venue: "Praça das Gaivotas",
+    address: "Avenida Parque Águas Claras, Quadra 105 - Águas Claras, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.8375,
+    lng: -48.0350
   }
 ];
 
@@ -316,6 +426,35 @@ class MarcaAiApp {
       "bsb-sul-108": [
         { name: "Cláudio Vôlei", avatar: "CV", role: "Atacante", matches: 5 },
         { name: "Renato DF", avatar: "RD", role: "Defesa", matches: 3 }
+      ],
+      "bsb-sudoeste-bosque": [
+        { name: "Marcelo Bosque", avatar: "MB", role: "Atacante", matches: 7 },
+        { name: "Ana Beach", avatar: "AB", role: "Levantadora", matches: 5 },
+        { name: "Lucas Silva (Você)", avatar: "LS", role: "Meio-Campo", matches: 2 }
+      ],
+      "bsb-sudoeste-304": [
+        { name: "Leandro Futsal", avatar: "LF", role: "Pivô", matches: 6 },
+        { name: "Thiago 304", avatar: "T3", role: "Fixo", matches: 4 }
+      ],
+      "bsb-sudoeste-300": [
+        { name: "Vitor Street", avatar: "VS", role: "Armador", matches: 8 },
+        { name: "Lucas Cestinha", avatar: "LC", role: "Ala", matches: 5 }
+      ],
+      "bsb-sudoeste-qrsw": [
+        { name: "Paulo Society", avatar: "PS", role: "Zagueiro", matches: 6 },
+        { name: "Rafael Econômico", avatar: "RE", role: "Meia", matches: 4 }
+      ],
+      "bsb-aguas-parque": [
+        { name: "Daniel Castanheiras", avatar: "DC", role: "Meio-Campo", matches: 7 },
+        { name: "Marcos Ala", avatar: "MA", role: "Ala", matches: 5 }
+      ],
+      "bsb-aguas-areia": [
+        { name: "Camila Praia", avatar: "CP", role: "Levantadora", matches: 8 },
+        { name: "Felipe Futevôlei", avatar: "FF", role: "Ataque", matches: 6 }
+      ],
+      "bsb-aguas-gaivotas": [
+        { name: "Rodrigo Gaivotas", avatar: "RG", role: "Pivô", matches: 5 },
+        { name: "Matheus DF", avatar: "MD", role: "Goleiro", matches: 3 }
       ]
     };
     this.courtMarkers = {};
@@ -617,11 +756,21 @@ class MarcaAiApp {
         className: 'custom-court-marker',
         html: `
           <div class="court-pin-inner" title="${court.name}">
-            <i class="fa-solid fa-landmark-dome"></i>
+            <svg class="court-rect-icon" viewBox="0 0 24 16" width="22" height="15" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Borda externa retangular da quadra esportiva -->
+              <rect x="1" y="1" width="22" height="14" rx="2" stroke="#ffffff" stroke-width="1.7"/>
+              <!-- Linha divisória de meio-campo / rede -->
+              <line x1="12" y1="1" x2="12" y2="15" stroke="#ffffff" stroke-width="1.5"/>
+              <!-- Círculo central da quadra -->
+              <circle cx="12" cy="8" r="3.2" stroke="#ffffff" stroke-width="1.4"/>
+              <!-- Áreas de gol / garrafão nos dois lados da quadra -->
+              <path d="M 1 4.5 H 4.5 V 11.5 H 1" stroke="#ffffff" stroke-width="1.3"/>
+              <path d="M 23 4.5 H 19.5 V 11.5 H 23" stroke="#ffffff" stroke-width="1.3"/>
+            </svg>
           </div>
         `,
-        iconSize: [32, 36],
-        iconAnchor: [16, 36],
+        iconSize: [38, 36],
+        iconAnchor: [19, 36],
         popupAnchor: [0, -32]
       });
 
@@ -630,8 +779,8 @@ class MarcaAiApp {
       marker.bindPopup(`
         <div style="font-family: Montserrat, sans-serif; padding: 4px; min-width: 220px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-size: 10px; background: #ecfdf5; color: #047857; font-weight: 700; padding: 2px 6px; border-radius: 4px;">
-              🏟️ Quadra Pública DF
+            <span style="font-size: 10px; background: rgba(220, 38, 38, 0.15); color: #ef4444; border: 1px solid rgba(220, 38, 38, 0.3); font-weight: 800; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+              <svg viewBox="0 0 24 16" width="12" height="8" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="22" height="14" rx="1.5"/><line x1="12" y1="1" x2="12" y2="15"/><circle cx="12" cy="8" r="3"/></svg> Quadra Pública DF
             </span>
             <span style="font-size: 10px; color: #64748b; font-weight: 600;">${court.region}</span>
           </div>
@@ -648,19 +797,29 @@ class MarcaAiApp {
           <button onclick="window.marcaApp.openCourtLeaderboard('${court.id}')" class="btn-court-leaderboard">
             <i class="fa-solid fa-trophy"></i> Ver Ranking da Quadra
           </button>
-          <button onclick="window.marcaApp.openCreateModalWithPreset('${court.id}')" style="margin-top: 6px; 
+          <button onclick="window.marcaApp.openCreateModalWithPreset('${court.id}')" style="margin-top: 8px; 
             width: 100%;
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: #fff;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: #ffffff;
             border: none;
-            padding: 8px 12px;
+            padding: 9px 12px;
             font-size: 12px;
             font-weight: 800;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+            transition: all 0.2s ease;
           ">
-            ⚽ Marcar Partida Nesta Quadra
+            <svg viewBox="0 0 24 16" width="16" height="11" fill="none" stroke="#ffffff" stroke-width="1.8" style="flex-shrink:0;">
+              <rect x="1" y="1" width="22" height="14" rx="2" stroke="#ffffff"/>
+              <line x1="12" y1="1" x2="12" y2="15" stroke="#ffffff"/>
+              <circle cx="12" cy="8" r="3" stroke="#ffffff"/>
+            </svg>
+            <span>Marcar Partida Nesta Quadra</span>
           </button>
         </div>
       `);
@@ -675,12 +834,14 @@ class MarcaAiApp {
     const btn = document.getElementById("btn-toggle-courts");
     if (btn) {
       if (this.showPublicCourts) {
-        btn.style.background = "rgba(16, 185, 129, 0.25)";
-        btn.style.color = "#a7f3d0";
+        btn.style.background = "rgba(220, 38, 38, 0.22)";
+        btn.style.color = "#fca5a5";
+        btn.style.borderColor = "#dc2626";
         this.showToast(`🏟️ Exibindo ${this.publicCourts.length} quadras públicas de Brasília.`);
       } else {
         btn.style.background = "rgba(15, 23, 42, 0.6)";
         btn.style.color = "#94a3b8";
+        btn.style.borderColor = "#334155";
         this.showToast("Camada de quadras públicas ocultada.");
       }
     }
