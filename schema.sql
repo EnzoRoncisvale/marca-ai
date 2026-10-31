@@ -18,6 +18,17 @@ CREATE TABLE IF NOT EXISTS partidas (
     has_goalie_perk INTEGER DEFAULT 0,
     organizer_id TEXT NOT NULL,
     checklist TEXT DEFAULT '[]',
+    status TEXT DEFAULT 'open',
+    court_id TEXT DEFAULT '',
+    score_team1 INTEGER DEFAULT 0,
+    score_team2 INTEGER DEFAULT 0,
+    team1_name TEXT DEFAULT 'Time 1',
+    team2_name TEXT DEFAULT 'Time 2',
+    mvp_player TEXT DEFAULT '',
+    best_gk TEXT DEFAULT '',
+    resenha_notes TEXT DEFAULT '',
+    toca_ai_count INTEGER DEFAULT 0,
+    toca_ai_users TEXT DEFAULT '[]',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

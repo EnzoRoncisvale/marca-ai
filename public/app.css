@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    MARCA AÍ! - Design System & Modern Sports Styling
    Foco em Partidas Comunitárias, Quadras Públicas e Descoberta de Jogos
    ========================================================================== */
@@ -1886,4 +1886,330 @@ body.dark-mode .toast {
   background: #1e293b;
   color: #f8fafc;
   border-color: #334155;
+}
+
+/* ==========================================================================
+   STRAVA BENCHMARK: LENDA LOCAL DA QUADRA & RANKING / LEADERBOARD
+   ========================================================================== */
+.court-legend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.1));
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 4px 0 8px;
+}
+
+.btn-court-leaderboard {
+  width: 100%;
+  background: #1e293b;
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 5px;
+  transition: all 0.2s ease;
+}
+
+.btn-court-leaderboard:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #f59e0b;
+}
+
+.leaderboard-hero {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 2px solid #f59e0b;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
+  border-radius: 14px;
+  padding: 1.2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.legend-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.legend-crown-icon {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #f59e0b;
+  font-size: 1.4rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  animation: crownPulse 2s infinite ease-in-out;
+}
+
+@keyframes crownPulse {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+  50% { transform: translateX(-50%) translateY(-3px) scale(1.1); }
+}
+
+.leaderboard-hero .user-avatar {
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+  border: 3px solid #f59e0b;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+  margin: 0 auto;
+}
+
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.leaderboard-item.rank-1 {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.leaderboard-item.is-current-user {
+  border-color: var(--primary);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.leaderboard-rank-badge {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rank-1 .leaderboard-rank-badge { background: #fef3c7; color: #b45309; }
+.rank-2 .leaderboard-rank-badge { background: #f1f5f9; color: #475569; }
+.rank-3 .leaderboard-rank-badge { background: #ffedd5; color: #9a3412; }
+.rank-other .leaderboard-rank-badge { background: #1e293b; color: #94a3b8; font-size: 0.8rem; }
+
+.leaderboard-player-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  margin: 0 0.75rem;
+}
+
+.leaderboard-matches-count {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--dark-900);
+  white-space: nowrap;
+}
+
+.user-progress-box {
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px dashed rgba(220, 38, 38, 0.35);
+  border-radius: 10px;
+  padding: 0.85rem;
+  font-size: 0.825rem;
+  color: var(--dark-800);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   STRAVA BENCHMARK: TOCA AÍ! ✋ (KUDOS) & RESENHA / SÚMULA PÓS-JOGO
+   ========================================================================== */
+.btn-toca-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1e293b;
+  border: 1.5px solid #334155;
+  color: #f1f5f9;
+  padding: 0.55rem 1rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.btn-toca-ai:hover {
+  transform: translateY(-2px);
+  border-color: #dc2626;
+  background: #27354f;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.btn-toca-ai.active {
+  background: linear-gradient(135deg, #dc2626, #e11d48);
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+}
+
+.btn-toca-ai .toca-hand {
+  font-size: 1.15rem;
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-toca-ai:hover .toca-hand,
+.btn-toca-ai:active .toca-hand {
+  transform: rotate(-15deg) scale(1.2);
+}
+
+.btn-toca-ai.animating .toca-hand {
+  animation: highFiveHit 0.4s ease;
+}
+
+@keyframes highFiveHit {
+  0% { transform: scale(1) rotate(0); }
+  50% { transform: scale(1.35) rotate(-25deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.toca-ai-mini-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #fca5a5;
+  font-size: 0.725rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toca-ai-mini-badge:hover {
+  background: rgba(220, 38, 38, 0.25);
+  transform: scale(1.06);
+}
+
+/* Placar e Súmula da Resenha */
+.match-resenha-card {
+  background: linear-gradient(135deg, #131c2e, #0c111d);
+  border: 1px solid #1e293b;
+  border-left: 4px solid var(--primary);
+  border-radius: 12px;
+  padding: 1.1rem;
+  margin: 1rem 0;
+}
+
+.resenha-scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  margin-bottom: 0.85rem;
+}
+
+.team-score-block {
+  text-align: center;
+  flex: 1;
+}
+
+.team-score-name {
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.team-score-digits {
+  font-size: 2.2rem;
+  font-weight: 900;
+  font-family: 'Montserrat', sans-serif;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.scoreboard-vs {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--primary);
+  opacity: 0.8;
+}
+
+.resenha-highlights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.resenha-highlight-pill {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.highlight-icon {
+  font-size: 1.1rem;
+}
+
+.highlight-label {
+  font-size: 0.675rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.highlight-player {
+  font-size: 0.825rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.resenha-quote {
+  font-style: italic;
+  font-size: 0.825rem;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  border-left: 2px solid #64748b;
+  margin-bottom: 0.85rem;
 }

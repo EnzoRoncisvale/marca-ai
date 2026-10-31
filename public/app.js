@@ -274,6 +274,50 @@ class MarcaAiApp {
     this.tempPin = null;
     this.publicCourts = PRESET_PUBLIC_COURTS;
     this.showPublicCourts = true;
+    this.currentLeaderboardCourtId = null;
+
+    // Histórico de frequência comunitária das quadras de Brasília (Strava Segment Benchmark)
+    this.courtHistorySeed = {
+      "bsb-parque-04": [
+        { name: "Felipe Canhoto", avatar: "FC", role: "Atacante", matches: 6 },
+        { name: "Rodrigo Paredão", avatar: "RP", role: "Goleiro", matches: 4 },
+        { name: "Lucas Silva (Você)", avatar: "LS", role: "Meio-Campo", matches: 2 }
+      ],
+      "bsb-parque-07": [
+        { name: "Camila Vôlei", avatar: "CV", role: "Levantadora", matches: 7 },
+        { name: "Bruno Beach", avatar: "BB", role: "Defesa", matches: 5 },
+        { name: "Lucas Silva (Você)", avatar: "LS", role: "Meio-Campo", matches: 1 }
+      ],
+      "bsb-parque-10": [
+        { name: "Gabriel Dunk", avatar: "GD", role: "Armador", matches: 8 },
+        { name: "Marcos Ala", avatar: "MA", role: "Ala", matches: 5 }
+      ],
+      "bsb-norte-408": [
+        { name: "Lucas Silva (Você)", avatar: "LS", role: "Meio-Campo", matches: 5 },
+        { name: "Thiago Futsal", avatar: "TF", role: "Fixo", matches: 4 },
+        { name: "Enzo 10", avatar: "EN", role: "Pivô", matches: 3 }
+      ],
+      "bsb-norte-104": [
+        { name: "Danilo Silva", avatar: "DS", role: "Zagueiro", matches: 5 },
+        { name: "Matheus", avatar: "MT", role: "Lateral", matches: 3 }
+      ],
+      "bsb-norte-210": [
+        { name: "Leo Street", avatar: "LS", role: "Armador", matches: 6 },
+        { name: "Rafael Cestinha", avatar: "RC", role: "Ala/Pivô", matches: 4 }
+      ],
+      "bsb-sul-308": [
+        { name: "Gustavo Society", avatar: "GS", role: "Meia", matches: 6 },
+        { name: "Fábio Muralha", avatar: "FM", role: "Goleiro", matches: 4 }
+      ],
+      "bsb-sul-415": [
+        { name: "Diego Sintético", avatar: "DS", role: "Pivô", matches: 7 },
+        { name: "André Fixo", avatar: "AF", role: "Fixo", matches: 4 }
+      ],
+      "bsb-sul-108": [
+        { name: "Cláudio Vôlei", avatar: "CV", role: "Atacante", matches: 5 },
+        { name: "Renato DF", avatar: "RD", role: "Defesa", matches: 3 }
+      ]
+    };
     this.courtMarkers = {};
 
     this.init();
@@ -598,7 +642,13 @@ class MarcaAiApp {
             <div><strong>Piso:</strong> ${court.surface}</div>
             <div>${court.hasLighting ? '💡 Iluminação Noturna Ativa' : '☀️ Uso Diurno'}</div>
           </div>
-          <button onclick="window.marcaApp.openCreateModalWithPreset('${court.id}')" style="
+          <div class="court-legend-badge">
+            <span>👑 Lenda Local:</span> <strong>${this.getCourtLeaderboard(court.id).legend ? this.getCourtLeaderboard(court.id).legend.name : 'Seja o Primeiro!'}</strong> (${this.getCourtLeaderboard(court.id).legend ? this.getCourtLeaderboard(court.id).legend.matches : 0} jogos)
+          </div>
+          <button onclick="window.marcaApp.openCourtLeaderboard('${court.id}')" class="btn-court-leaderboard">
+            <i class="fa-solid fa-trophy"></i> Ver Ranking da Quadra
+          </button>
+          <button onclick="window.marcaApp.openCreateModalWithPreset('${court.id}')" style="margin-top: 6px; 
             width: 100%;
             background: linear-gradient(135deg, #059669, #10b981);
             color: #fff;
@@ -860,7 +910,11 @@ class MarcaAiApp {
             </div>
             ${missingBadge}
           </div>
-          <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end;">
+            ${match.status === 'completed' ? `<span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);"><i class="fa-solid fa-check"></i> ${match.scoreTeam1 ?? 0} x ${match.scoreTeam2 ?? 0}</span>` : ''}
+            <span class="toca-ai-mini-badge ${(Array.isArray(match.tocaAiUsers) && match.tocaAiUsers.includes(this.currentUser.id)) ? 'active' : ''}" onclick="event.stopPropagation(); window.marcaApp.toggleMatchTocaAi('${match.id}')" title="Toca Aí! (Kudos da Pelada)">
+              <span class="toca-hand">✋</span> ${match.tocaAiCount || (Array.isArray(match.tocaAiUsers) ? match.tocaAiUsers.length : 0)}
+            </span>
             ${isUserIn ? '<span style="background: #ecfdf5; color: #10b981; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Confirmado</span>' : ''}
             <span class="public-court-badge"><i class="fa-solid fa-tree"></i> Pública</span>
           </div>
@@ -1095,6 +1149,7 @@ class MarcaAiApp {
     this.renderPlayerList(match);
     this.renderChecklist(match);
     this.updateModalActions(match);
+    this.renderMatchResenhaUI(match);
 
     modal.classList.add("active");
   }
@@ -1685,6 +1740,38 @@ class MarcaAiApp {
     if (inputRole) inputRole.value = this.currentUser.position || "Meio-Campo";
     if (inputPhone) inputPhone.value = this.currentUser.phone || "";
 
+    // Atualiza contadores Strava no Perfil
+    const gamesCountEl = document.getElementById("profile-games-count");
+    const crownsCountEl = document.getElementById("profile-crowns-count");
+    const tocaCountEl = document.getElementById("profile-toca-ai-count");
+
+    // Total de partidas participadas
+    const userMatchesCount = this.matches.filter(m => 
+      Array.isArray(m.players) && m.players.some(p => p.id === this.currentUser.id || p.name === this.currentUser.name)
+    ).length;
+
+    // Total de Toca Aí! recebidos
+    let totalToca = 0;
+    this.matches.forEach(m => {
+      const isParticipant = Array.isArray(m.players) && m.players.some(p => p.id === this.currentUser.id || p.name === this.currentUser.name);
+      if (isParticipant || m.organizerId === this.currentUser.id) {
+        totalToca += (m.tocaAiCount || (Array.isArray(m.tocaAiUsers) ? m.tocaAiUsers.length : 0));
+      }
+    });
+
+    // Quantas quadras onde o usuário é a Lenda
+    let crownsCount = 0;
+    this.publicCourts.forEach(c => {
+      const lb = this.getCourtLeaderboard(c.id);
+      if (lb.legend && (lb.legend.name.includes("(Você)") || lb.legend.name.toLowerCase() === this.currentUser.name.toLowerCase())) {
+        crownsCount++;
+      }
+    });
+
+    if (gamesCountEl) gamesCountEl.textContent = userMatchesCount;
+    if (crownsCountEl) crownsCountEl.textContent = `👑 ${crownsCount}`;
+    if (tocaCountEl) tocaCountEl.textContent = `✋ ${totalToca}`;
+
     modal.classList.add("active");
   }
 
@@ -1753,6 +1840,386 @@ class MarcaAiApp {
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
+
+  // ===========================================================================
+  // 10. STRAVA BENCHMARK: LENDA DA QUADRA & LEADERBOARD (SEGMENTOS)
+  // ===========================================================================
+  getCourtLeaderboard(courtId) {
+    const court = this.publicCourts.find(c => c.id === courtId);
+    if (!court) return { court: null, legend: null, ranking: [], userMatches: 0, diffToLead: 1 };
+
+    // Partidas jogadas nesta quadra
+    const courtMatches = this.matches.filter(m => {
+      if (m.courtId && m.courtId === courtId) return true;
+      if (m.venue && court.venue && m.venue.toLowerCase().includes(court.venue.toLowerCase().substring(0, 15))) return true;
+      return false;
+    });
+
+    const playerCounts = {};
+
+    // 1. Dados de histórico inicial
+    const seed = this.courtHistorySeed[courtId] || [];
+    seed.forEach(item => {
+      playerCounts[item.name] = {
+        name: item.name,
+        avatar: item.avatar,
+        role: item.role,
+        matches: item.matches
+      };
+    });
+
+    // 2. Incrementa com as partidas cadastradas no app
+    courtMatches.forEach(match => {
+      const players = match.players || [];
+      players.forEach(p => {
+        const pName = p.name || "Peladeiro";
+        const isUser = p.id === this.currentUser.id || pName.toLowerCase() === this.currentUser.name.toLowerCase();
+        const effectiveName = isUser ? `${this.currentUser.name} (Você)` : pName;
+        if (!playerCounts[effectiveName]) {
+          playerCounts[effectiveName] = {
+            name: effectiveName,
+            avatar: p.name ? p.name.substring(0, 2).toUpperCase() : "AT",
+            role: p.role || "Jogador",
+            matches: 0
+          };
+        }
+        playerCounts[effectiveName].matches += 1;
+      });
+    });
+
+    const ranking = Object.values(playerCounts).sort((a, b) => b.matches - a.matches);
+    const legend = ranking.length > 0 ? ranking[0] : null;
+
+    const userEntry = ranking.find(r => r.name.includes("(Você)") || r.name.toLowerCase() === this.currentUser.name.toLowerCase());
+    const userMatches = userEntry ? userEntry.matches : 0;
+    const diffToLead = legend ? Math.max(1, (legend.matches - userMatches) + (legend === userEntry ? 0 : 1)) : 1;
+
+    return { court, legend, ranking, userMatches, diffToLead };
+  }
+
+  openCourtLeaderboard(courtId) {
+    const lb = this.getCourtLeaderboard(courtId);
+    if (!lb || !lb.court) return;
+
+    this.currentLeaderboardCourtId = courtId;
+    const modal = document.getElementById("court-leaderboard-modal");
+    if (!modal) return;
+
+    document.getElementById("leaderboard-court-title").textContent = lb.court.name;
+    document.getElementById("leaderboard-court-region").textContent = lb.court.region;
+
+    // Render Hero (Lenda da Quadra Atual)
+    const heroBox = document.getElementById("leaderboard-hero-box");
+    if (heroBox) {
+      if (lb.legend) {
+        heroBox.innerHTML = `
+          <div class="legend-avatar-wrapper">
+            <i class="fa-solid fa-crown legend-crown-icon"></i>
+            <div class="user-avatar">${lb.legend.avatar}</div>
+          </div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin: 4px 0 2px;">${lb.legend.name}</h3>
+          <div style="font-size: 0.775rem; color: #f59e0b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+            👑 Lenda da Quadra • Dono da Casa
+          </div>
+          <p style="font-size: 0.8rem; color: #94a3b8; margin: 6px 0 0;">
+            <strong>${lb.legend.matches}</strong> partidas disputadas nesta quadra pública
+          </p>
+        `;
+      } else {
+        heroBox.innerHTML = `
+          <div class="user-avatar" style="margin: 0 auto 0.5rem;">?</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #ffffff;">Seja a Primeira Lenda!</h3>
+          <p style="font-size: 0.8rem; color: #94a3b8;">Nenhum racha registrado ainda nesta quadra pública.</p>
+        `;
+      }
+    }
+
+    // Progresso do Usuário
+    const progressBox = document.getElementById("leaderboard-user-progress");
+    if (progressBox) {
+      const isUserLegend = lb.legend && (lb.legend.name.includes("(Você)") || lb.legend.name.toLowerCase() === this.currentUser.name.toLowerCase());
+      if (isUserLegend) {
+        progressBox.innerHTML = `
+          <div style="font-size: 1.35rem; color: #f59e0b;"><i class="fa-solid fa-trophy"></i></div>
+          <div>
+            <strong style="color: #f59e0b;">Você é a Lenda Oficial desta Quadra!</strong>
+            <p style="margin: 2px 0 0; font-size: 0.75rem; color: #94a3b8;">Você lidera o pódio com ${lb.userMatches} partidas jogadas aqui.</p>
+          </div>
+        `;
+      } else {
+        progressBox.innerHTML = `
+          <div style="font-size: 1.35rem; color: var(--primary);"><i class="fa-solid fa-person-running"></i></div>
+          <div>
+            <strong style="color: #ffffff;">Seu Progresso: ${lb.userMatches} partida(s) jogada(s) aqui</strong>
+            <p style="margin: 2px 0 0; font-size: 0.75rem; color: #94a3b8;">Faltam <strong>${lb.diffToLead}</strong> partidas para você assumir a coroa de Lenda da Quadra!</p>
+          </div>
+        `;
+      }
+    }
+
+    // Lista Top 5
+    const listEl = document.getElementById("leaderboard-list-container");
+    if (listEl) {
+      if (lb.ranking.length === 0) {
+        listEl.innerHTML = `<p style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 1rem 0;">Nenhum peladeiro ranqueado ainda.</p>`;
+      } else {
+        const rankBadges = ["🥇", "🥈", "🥉", "4º", "5º"];
+        listEl.innerHTML = lb.ranking.slice(0, 5).map((player, idx) => {
+          const isUser = player.name.includes("(Você)") || player.name.toLowerCase() === this.currentUser.name.toLowerCase();
+          const rankClass = idx === 0 ? "rank-1" : idx === 1 ? "rank-2" : idx === 2 ? "rank-3" : "rank-other";
+          return `
+            <div class="leaderboard-item ${rankClass} ${isUser ? 'is-current-user' : ''}">
+              <div class="leaderboard-rank-badge">${rankBadges[idx] || (idx + 1) + 'º'}</div>
+              <div class="leaderboard-player-info">
+                <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${player.avatar}</div>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 700; color: #ffffff;">${player.name}</div>
+                  <div style="font-size: 0.7rem; color: #94a3b8;">${player.role}</div>
+                </div>
+              </div>
+              <div class="leaderboard-matches-count">
+                ${player.matches} ${player.matches === 1 ? 'partida' : 'partidas'}
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+
+    modal.classList.add("active");
+  }
+
+  closeCourtLeaderboard() {
+    const modal = document.getElementById("court-leaderboard-modal");
+    if (modal) modal.classList.remove("active");
+  }
+
+  createMatchAtCurrentLeaderboardCourt() {
+    const courtId = this.currentLeaderboardCourtId;
+    this.closeCourtLeaderboard();
+    if (courtId) {
+      this.openCreateModalWithPreset(courtId);
+    } else {
+      this.openCreateModal();
+    }
+  }
+
+  // ===========================================================================
+  // 11. STRAVA BENCHMARK: TOCA AÍ! ✋ (KUDOS) & SÚMULA / RESENHA PÓS-JOGO
+  // ===========================================================================
+  renderMatchResenhaUI(match) {
+    const container = document.getElementById("modal-resenha-container");
+    const btnToca = document.getElementById("modal-btn-toca-ai");
+    const tocaCountEl = document.getElementById("modal-toca-ai-count");
+    const btnResenhaText = document.getElementById("modal-btn-resenha-text");
+
+    const tocaUsers = Array.isArray(match.tocaAiUsers) ? match.tocaAiUsers : [];
+    const hasTocado = tocaUsers.includes(this.currentUser.id);
+    const count = match.tocaAiCount || tocaUsers.length || 0;
+
+    if (btnToca) {
+      btnToca.classList.toggle("active", hasTocado);
+    }
+    if (tocaCountEl) {
+      tocaCountEl.textContent = count;
+    }
+    if (btnResenhaText) {
+      btnResenhaText.textContent = match.status === 'completed' ? 'Editar Súmula' : 'Súmula & Placar';
+    }
+
+    if (!container) return;
+
+    if (match.status === 'completed') {
+      container.innerHTML = `
+        <div class="match-resenha-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+            <span style="font-size: 0.725rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">
+              <i class="fa-solid fa-circle-check"></i> Súmula Final do Racha
+            </span>
+            <span style="font-size: 0.725rem; color: #94a3b8;">Partida Encerrada</span>
+          </div>
+          <div class="resenha-scoreboard">
+            <div class="team-score-block">
+              <div class="team-score-name">${match.team1Name || 'Time 1'}</div>
+              <div class="team-score-digits">${match.scoreTeam1 ?? 0}</div>
+            </div>
+            <div class="scoreboard-vs">X</div>
+            <div class="team-score-block">
+              <div class="team-score-name">${match.team2Name || 'Time 2'}</div>
+              <div class="team-score-digits">${match.scoreTeam2 ?? 0}</div>
+            </div>
+          </div>
+          ${(match.mvpPlayer || match.bestGk) ? `
+          <div class="resenha-highlights-grid">
+            ${match.mvpPlayer ? `
+            <div class="resenha-highlight-pill">
+              <span class="highlight-icon">🌟</span>
+              <div>
+                <div class="highlight-label">Craque do Jogo</div>
+                <div class="highlight-player">${match.mvpPlayer}</div>
+              </div>
+            </div>` : ''}
+            ${match.bestGk ? `
+            <div class="resenha-highlight-pill">
+              <span class="highlight-icon">🧤</span>
+              <div>
+                <div class="highlight-label">Paredão do Dia</div>
+                <div class="highlight-player">${match.bestGk}</div>
+              </div>
+            </div>` : ''}
+          </div>` : ''}
+          ${match.resenhaNotes ? `
+          <div class="resenha-quote">
+            <i class="fa-solid fa-quote-left" style="opacity: 0.4; margin-right: 4px;"></i>
+            ${match.resenhaNotes}
+          </div>` : ''}
+        </div>
+      `;
+    } else {
+      container.innerHTML = "";
+    }
+  }
+
+  toggleCurrentMatchTocaAi() {
+    if (!this.selectedMatchId) return;
+    this.toggleMatchTocaAi(this.selectedMatchId);
+  }
+
+  async toggleMatchTocaAi(matchId) {
+    const match = this.matches.find(m => m.id === matchId);
+    if (!match) return;
+
+    if (!Array.isArray(match.tocaAiUsers)) {
+      match.tocaAiUsers = [];
+    }
+
+    const userId = this.currentUser.id;
+    const userIndex = match.tocaAiUsers.indexOf(userId);
+    let hasTocado = false;
+
+    if (userIndex > -1) {
+      match.tocaAiUsers.splice(userIndex, 1);
+      hasTocado = false;
+    } else {
+      match.tocaAiUsers.push(userId);
+      hasTocado = true;
+    }
+
+    match.tocaAiCount = match.tocaAiUsers.length;
+    this.saveLocalCache();
+    this.renderSidebarMatches();
+
+    if (this.selectedMatchId === matchId) {
+      this.renderMatchResenhaUI(match);
+      const btn = document.getElementById("modal-btn-toca-ai");
+      if (btn) {
+        btn.classList.add("animating");
+        setTimeout(() => btn.classList.remove("animating"), 400);
+      }
+    }
+
+    if (hasTocado) {
+      this.showToast("✋ Toca aí! Você bateu na mão da galera desta pelada!");
+    } else {
+      this.showToast("Toca aí removido.");
+    }
+
+    try {
+      await fetch(`${API_BASE_URL}/api/partidas/${matchId}/toca-ai`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonPayload({ userId })
+      });
+    } catch (e) {
+      console.log("Offline mode - Toca Aí salvo localmente");
+    }
+  }
+
+  openResenhaModal() {
+    const match = this.matches.find(m => m.id === this.selectedMatchId);
+    if (!match) return;
+
+    const modal = document.getElementById("resenha-modal");
+    if (!modal) return;
+
+    document.getElementById("resenha-team1-name").value = match.team1Name || "Time Colete";
+    document.getElementById("resenha-team2-name").value = match.team2Name || "Sem Colete";
+    document.getElementById("resenha-team1-score").value = match.scoreTeam1 ?? 0;
+    document.getElementById("resenha-team2-score").value = match.scoreTeam2 ?? 0;
+    document.getElementById("resenha-notes-input").value = match.resenhaNotes || "";
+
+    // Popular dropdowns com jogadores confirmados
+    const mvpSelect = document.getElementById("resenha-mvp-select");
+    const gkSelect = document.getElementById("resenha-gk-select");
+    const players = match.players || [];
+
+    const optionsHtml = '<option value="">Selecione o destaque...</option>' + 
+      players.map(p => `<option value="${p.name}">${p.name} (${p.role})</option>`).join("");
+
+    if (mvpSelect) {
+      mvpSelect.innerHTML = optionsHtml;
+      mvpSelect.value = match.mvpPlayer || "";
+    }
+    if (gkSelect) {
+      gkSelect.innerHTML = optionsHtml;
+      gkSelect.value = match.bestGk || "";
+    }
+
+    modal.classList.add("active");
+  }
+
+  closeResenhaModal() {
+    const modal = document.getElementById("resenha-modal");
+    if (modal) modal.classList.remove("active");
+  }
+
+  async submitResenha(e) {
+    e.preventDefault();
+    const match = this.matches.find(m => m.id === this.selectedMatchId);
+    if (!match) return;
+
+    const team1Name = document.getElementById("resenha-team1-name").value.trim() || "Time 1";
+    const team2Name = document.getElementById("resenha-team2-name").value.trim() || "Time 2";
+    const scoreTeam1 = parseInt(document.getElementById("resenha-team1-score").value, 10) || 0;
+    const scoreTeam2 = parseInt(document.getElementById("resenha-team2-score").value, 10) || 0;
+    const mvpPlayer = document.getElementById("resenha-mvp-select").value;
+    const bestGk = document.getElementById("resenha-gk-select").value;
+    const notes = document.getElementById("resenha-notes-input").value.trim();
+
+    match.status = 'completed';
+    match.team1Name = team1Name;
+    match.team2Name = team2Name;
+    match.scoreTeam1 = scoreTeam1;
+    match.scoreTeam2 = scoreTeam2;
+    match.mvpPlayer = mvpPlayer;
+    match.bestGk = bestGk;
+    match.resenhaNotes = notes;
+
+    this.saveLocalCache();
+    this.closeResenhaModal();
+    this.renderSidebarMatches();
+    this.renderMatchResenhaUI(match);
+    this.showToast("🏆 Súmula e placar do racha salvos com sucesso!");
+
+    try {
+      await fetch(`${API_BASE_URL}/api/partidas/${match.id}/resenha`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonPayload({
+          scoreTeam1,
+          scoreTeam2,
+          team1Name,
+          team2Name,
+          mvpPlayer,
+          bestGk,
+          notes
+        })
+      });
+    } catch (err) {
+      console.log("Offline mode - Resenha salva localmente");
+    }
+  }
+
 }
 
 function jsonPayload(obj) {

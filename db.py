@@ -24,6 +24,17 @@ CREATE TABLE IF NOT EXISTS partidas (
     has_goalie_perk INTEGER DEFAULT 0,
     organizer_id TEXT NOT NULL,
     checklist TEXT DEFAULT '[]',
+    status TEXT DEFAULT 'open',
+    court_id TEXT DEFAULT '',
+    score_team1 INTEGER DEFAULT 0,
+    score_team2 INTEGER DEFAULT 0,
+    team1_name TEXT DEFAULT 'Time 1',
+    team2_name TEXT DEFAULT 'Time 2',
+    mvp_player TEXT DEFAULT '',
+    best_gk TEXT DEFAULT '',
+    resenha_notes TEXT DEFAULT '',
+    toca_ai_count INTEGER DEFAULT 0,
+    toca_ai_users TEXT DEFAULT '[]',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -108,11 +119,26 @@ def get_connection():
             print("Erro ao inicializar schema SQLite:", e)
     else:
         # Migração automática de colunas caso ainda não existam
-        try:
-            conn.execute("ALTER TABLE partidas ADD COLUMN checklist TEXT DEFAULT '[]'")
-            conn.commit()
-        except sqlite3.OperationalError:
-            pass
+        cols_to_add = [
+            ("checklist", "TEXT DEFAULT '[]'"),
+            ("status", "TEXT DEFAULT 'open'"),
+            ("court_id", "TEXT DEFAULT ''"),
+            ("score_team1", "INTEGER DEFAULT 0"),
+            ("score_team2", "INTEGER DEFAULT 0"),
+            ("team1_name", "TEXT DEFAULT 'Time 1'"),
+            ("team2_name", "TEXT DEFAULT 'Time 2'"),
+            ("mvp_player", "TEXT DEFAULT ''"),
+            ("best_gk", "TEXT DEFAULT ''"),
+            ("resenha_notes", "TEXT DEFAULT ''"),
+            ("toca_ai_count", "INTEGER DEFAULT 0"),
+            ("toca_ai_users", "TEXT DEFAULT '[]'")
+        ]
+        for col_name, col_def in cols_to_add:
+            try:
+                conn.execute(f"ALTER TABLE partidas ADD COLUMN {col_name} {col_def}")
+                conn.commit()
+            except sqlite3.OperationalError:
+                pass
             
     return conn
 
@@ -182,6 +208,22 @@ def get_all_partidas():
             
         if not p_dict["checklist"]:
             p_dict["checklist"] = get_default_checklist(p_dict.get("category", "futebol"))
+            
+        p_dict["courtId"] = p_dict.get("court_id") or ""
+        p_dict["status"] = p_dict.get("status") or "open"
+        p_dict["scoreTeam1"] = int(p_dict.get("score_team1") or 0)
+        p_dict["scoreTeam2"] = int(p_dict.get("score_team2") or 0)
+        p_dict["team1Name"] = p_dict.get("team1_name") or "Time 1"
+        p_dict["team2Name"] = p_dict.get("team2_name") or "Time 2"
+        p_dict["mvpPlayer"] = p_dict.get("mvp_player") or ""
+        p_dict["bestGk"] = p_dict.get("best_gk") or ""
+        p_dict["resenhaNotes"] = p_dict.get("resenha_notes") or ""
+        p_dict["tocaAiCount"] = int(p_dict.get("toca_ai_count") or 0)
+        raw_toca = p_dict.get("toca_ai_users")
+        try:
+            p_dict["tocaAiUsers"] = json.loads(raw_toca) if raw_toca else []
+        except Exception:
+            p_dict["tocaAiUsers"] = []
         
         partidas.append(p_dict)
         
@@ -209,13 +251,14 @@ def create_partida(data):
     if not checklist_data:
         checklist_data = get_default_checklist(category)
     checklist_json = json.dumps(checklist_data, ensure_ascii=False) if isinstance(checklist_data, list) else str(checklist_data)
+    court_id = data.get("courtId") or data.get("court_id") or ""
 
     cursor.execute("""
         INSERT INTO partidas (
             id, title, sport, category, date, time, venue, address,
             court_type, has_lighting, lat, lng, level, max_players,
-            has_goalie_perk, organizer_id, checklist
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            has_goalie_perk, organizer_id, checklist, court_id, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')
     """, (
         p_id,
         data.get("title", "Pelada").strip() or "Partida",
@@ -233,7 +276,8 @@ def create_partida(data):
         int(data.get("maxPlayers", 14)),
         1 if data.get("hasGoaliePerk", False) else 0,
         data.get("organizerId", "usr-01"),
-        checklist_json
+        checklist_json,
+        court_id
     ))
     
     # Inserir o criador como primeiro participante confirmado
@@ -372,6 +416,72 @@ def delete_partida(partida_id):
     conn.commit()
     conn.close()
     return True
+
+def save_resenha(partida_id, resenha_data):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    score_team1 = int(resenha_data.get("scoreTeam1", 0))
+    score_team2 = int(resenha_data.get("scoreTeam2", 0))
+    team1_name = str(resenha_data.get("team1Name", "Time 1")).strip() or "Time 1"
+    team2_name = str(resenha_data.get("team2Name", "Time 2")).strip() or "Time 2"
+    mvp_player = str(resenha_data.get("mvpPlayer", "")).strip()
+    best_gk = str(resenha_data.get("bestGk", "")).strip()
+    notes = str(resenha_data.get("notes", "")).strip()
+
+    cursor.execute("""
+        UPDATE partidas
+        SET status = 'completed',
+            score_team1 = ?,
+            score_team2 = ?,
+            team1_name = ?,
+            team2_name = ?,
+            mvp_player = ?,
+            best_gk = ?,
+            resenha_notes = ?
+        WHERE id = ?
+    """, (score_team1, score_team2, team1_name, team2_name, mvp_player, best_gk, notes, partida_id))
+    
+    conn.commit()
+    conn.close()
+    return True, "Resenha e placar registrados com sucesso!"
+
+def toggle_toca_ai(partida_id, user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT toca_ai_users FROM partidas WHERE id = ?", (partida_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return False, "Partida não encontrada", 0, False
+
+    raw = row["toca_ai_users"]
+    try:
+        users = json.loads(raw) if raw else []
+    except Exception:
+        users = []
+
+    user_str = str(user_id)
+    if user_str in users:
+        users.remove(user_str)
+        has_tocado = False
+    else:
+        users.append(user_str)
+        has_tocado = True
+
+    count = len(users)
+    cursor.execute("""
+        UPDATE partidas
+        SET toca_ai_count = ?,
+            toca_ai_users = ?
+        WHERE id = ?
+    """, (count, json.dumps(users), partida_id))
+
+    conn.commit()
+    conn.close()
+    return True, "Toca aí registrado!", count, has_tocado
+
 
 if __name__ == "__main__":
     init_db()

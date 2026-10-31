@@ -170,6 +170,37 @@ class handler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, status=500)
             return
 
+        # Registrar Resenha & Súmula (/api/partidas/<id>/resenha)
+        if "/resenha" in path:
+            parts = path.strip("/").split("/")
+            try:
+                idx = parts.index("partidas")
+                partida_id = parts[idx + 1]
+            except Exception:
+                partida_id = parts[-2]
+            try:
+                ok, msg = db.save_resenha(partida_id, data)
+                self._send_json({"success": ok, "message": msg}, status=200 if ok else 400)
+            except Exception as e:
+                self._send_json({"error": str(e)}, status=500)
+            return
+
+        # Toca Aí! / Kudos (/api/partidas/<id>/toca-ai)
+        if "/toca-ai" in path:
+            parts = path.strip("/").split("/")
+            try:
+                idx = parts.index("partidas")
+                partida_id = parts[idx + 1]
+            except Exception:
+                partida_id = parts[-2]
+            user_id = data.get("userId", "usr-anon")
+            try:
+                ok, msg, count, has_tocado = db.toggle_toca_ai(partida_id, user_id)
+                self._send_json({"success": ok, "message": msg, "tocaAiCount": count, "hasTocado": has_tocado}, status=200 if ok else 400)
+            except Exception as e:
+                self._send_json({"error": str(e)}, status=500)
+            return
+
         self._send_json({"error": f"Endpoint POST {path} não encontrado"}, status=404)
 
     def do_DELETE(self):
