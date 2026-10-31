@@ -167,6 +167,51 @@ const PRESET_PUBLIC_COURTS = [
     lat: -15.7410,
     lng: -47.8685
   },
+  {
+    id: "bsb-norte-202",
+    name: "Quadra Poliesportiva da SQN 202/203",
+    region: "Asa Norte",
+    sports: ["Futsal", "Basquete", "Vôlei"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Concreto Pintado com Alambrado",
+    venue: "Praça Esportiva SQN 202/203 Norte",
+    address: "SQN 202/203, Entrequadra - Asa Norte, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7830,
+    lng: -47.8860
+  },
+  {
+    id: "bsb-norte-206",
+    name: "Quadra Poliesportiva da SQN 206/207",
+    region: "Asa Norte",
+    sports: ["Futsal", "Vôlei"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Cimento com Iluminação",
+    venue: "Quadra Comunitária SQN 206/207 Norte",
+    address: "SQN 206/207, Entrequadra - Asa Norte, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7760,
+    lng: -47.8835
+  },
+  {
+    id: "bsb-norte-404",
+    name: "Complexo Esportivo SQN 404/405 Norte",
+    region: "Asa Norte",
+    sports: ["Futsal", "Futebol Society", "Vôlei de Areia"],
+    defaultSport: "Futebol Society",
+    category: "futebol",
+    surface: "Concreto e Caixa de Areia",
+    venue: "Praça de Esportes SQN 404/405 Norte",
+    address: "SQN 404/405, Área Verde - Asa Norte, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.7735,
+    lng: -47.8760
+  },
 
   // --- ASA SUL ---
   {
@@ -259,6 +304,51 @@ const PRESET_PUBLIC_COURTS = [
     hasLighting: true,
     lat: -15.8175,
     lng: -47.9180
+  },
+  {
+    id: "bsb-sul-102",
+    name: "Quadra Poliesportiva da SQS 102/103 Sul",
+    region: "Asa Sul",
+    sports: ["Basquete", "Futsal"],
+    defaultSport: "Basquete",
+    category: "basquete",
+    surface: "Piso Asfáltico com Tabelas",
+    venue: "Praça Esportiva SQS 102/103 Sul",
+    address: "SQS 102/103, Entrequadra - Asa Sul, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.8010,
+    lng: -47.8965
+  },
+  {
+    id: "bsb-sul-106",
+    name: "Quadra Poliesportiva da SQS 106/107 Sul",
+    region: "Asa Sul",
+    sports: ["Futsal", "Vôlei"],
+    defaultSport: "Futsal",
+    category: "futebol",
+    surface: "Piso Cimentado Arborizado",
+    venue: "Praça Comunitária SQS 106/107 Sul",
+    address: "SQS 106/107, Entrequadra - Asa Sul, Brasília - DF",
+    courtType: "Quadra Pública",
+    hasLighting: true,
+    lat: -15.8090,
+    lng: -47.9040
+  },
+  {
+    id: "bsb-sul-deck",
+    name: "Parque Deck Sul (Orla do Lago)",
+    region: "Asa Sul / Lago",
+    sports: ["Vôlei de Praia", "Futevôlei", "Beach Tennis", "Futsal"],
+    defaultSport: "Beach Tennis",
+    category: "beach-tennis",
+    surface: "Quadras de Areia e Pista Poliesportiva",
+    venue: "Parque Deck Sul",
+    address: "SCES Trecho 2, Beira do Lago Paranoá - Asa Sul, Brasília - DF",
+    courtType: "Parque Urbano / Orla Pública",
+    hasLighting: true,
+    lat: -15.8270,
+    lng: -47.8930
   },
 
   // --- SETOR SUDOESTE ---
@@ -426,6 +516,30 @@ class MarcaAiApp {
       "bsb-sul-108": [
         { name: "Cláudio Vôlei", avatar: "CV", role: "Atacante", matches: 5 },
         { name: "Renato DF", avatar: "RD", role: "Defesa", matches: 3 }
+      ],
+      "bsb-norte-202": [
+        { name: "Thiago 202", avatar: "T2", role: "Meio-Campo", matches: 6 },
+        { name: "Felipe Canhoto", avatar: "FC", role: "Atacante", matches: 4 }
+      ],
+      "bsb-norte-206": [
+        { name: "Lucas Silva (Você)", avatar: "LS", role: "Meio-Campo", matches: 3 },
+        { name: "Rafael Vôlei", avatar: "RV", role: "Levantador", matches: 5 }
+      ],
+      "bsb-norte-404": [
+        { name: "Arthur 404", avatar: "A4", role: "Pivô", matches: 7 },
+        { name: "Danilo Society", avatar: "DS", role: "Fixo", matches: 5 }
+      ],
+      "bsb-sul-102": [
+        { name: "Marcos Cestinha", avatar: "MC", role: "Armador", matches: 7 },
+        { name: "Guilherme 102", avatar: "G1", role: "Ala", matches: 4 }
+      ],
+      "bsb-sul-106": [
+        { name: "André 106", avatar: "A1", role: "Zagueiro", matches: 6 },
+        { name: "Rodrigo Futsal", avatar: "RF", role: "Goleiro", matches: 4 }
+      ],
+      "bsb-sul-deck": [
+        { name: "Bia Beach", avatar: "BB", role: "Defesa", matches: 8 },
+        { name: "Leo Futevôlei", avatar: "LF", role: "Ataque", matches: 6 }
       ],
       "bsb-sudoeste-bosque": [
         { name: "Marcelo Bosque", avatar: "MB", role: "Atacante", matches: 7 },
@@ -756,7 +870,7 @@ class MarcaAiApp {
         className: 'custom-court-marker',
         html: `
           <div class="court-pin-inner" title="${court.name}">
-            <svg class="court-rect-icon" viewBox="0 0 24 16" width="22" height="15" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="court-rect-icon" viewBox="0 0 24 16" width="18" height="12" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <!-- Borda externa retangular da quadra esportiva -->
               <rect x="1" y="1" width="22" height="14" rx="2" stroke="#ffffff" stroke-width="1.7"/>
               <!-- Linha divisória de meio-campo / rede -->
@@ -769,9 +883,9 @@ class MarcaAiApp {
             </svg>
           </div>
         `,
-        iconSize: [38, 36],
-        iconAnchor: [19, 36],
-        popupAnchor: [0, -32]
+        iconSize: [30, 27],
+        iconAnchor: [15, 27],
+        popupAnchor: [0, -25]
       });
 
       const marker = L.marker([court.lat, court.lng], { icon: courtIcon }).addTo(this.map);
